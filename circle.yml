@@ -26,6 +26,6 @@ dependencies:
 
 deployment:
   production:
-    branch: master
+    branch: test-server
     heroku:
       appname: giftcard-service-test-pack
