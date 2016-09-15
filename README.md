@@ -29,4 +29,4 @@ An errorType of `FORMAT_ERROR` is returned followed by an explanation of the for
 
 * The "field"  attribute containing the field that has been formatted incorrectly
 * The "msg" field contains information on what violation has occurred
-* The "value" field contains the incorrectly formatted value that was used
+* The "value" field contains the incorrectly formatted value that was used 
