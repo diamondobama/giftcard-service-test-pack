@@ -2,7 +2,7 @@
 REST server for testing a client implementation of the [giftcard-service-interface](https://github.com/electrumpayments/giftcard-service-interface).
 
 ##Testing a Client
-To test a client implementation an instance of this test server is provided at: https://airtime-service-test-pack.herokuapp.com.
+To test a client implementation an instance of this test server is provided at: https://giftcard-service-test-pack.herokuapp.com.
 Messages sent to this server via the urls described in the [giftcard-service-interface](https://github.com/electrumpayments/giftcard-service-interface) will be
 validated and responded to with mocked up data.
 
@@ -29,4 +29,4 @@ An errorType of `FORMAT_ERROR` is returned followed by an explanation of the for
 
 * The "field"  attribute containing the field that has been formatted incorrectly
 * The "msg" field contains information on what violation has occurred
-* The "value" field contains the incorrectly formatted value that was used
+* The "value" field contains the incorrectly formatted value that was used 
