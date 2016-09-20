@@ -17,7 +17,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.electrum.giftcard.resource.impl.GiftcardTestServer;
+import io.electrum.giftcard.server.api.GiftcardTestServer;
 public class GiftcardTestServerRunner {
 
    private static Logger log_logger = LoggerFactory.getLogger("io.electrum.giftcard.server.log");

@@ -1,4 +1,4 @@
-package io.electrum.giftcard.resource.impl;
+package io.electrum.giftcard.server.api;
 
 import java.util.UUID;
 
@@ -21,9 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.electrum.giftcard.handler.GiftcardMessageHandlerFactory;
-import io.electrum.giftcard.server.model.DataResponse;
-import io.electrum.giftcard.server.model.ResetRequest;
-import io.electrum.giftcard.server.model.ResetResponse;
+import io.electrum.giftcard.server.api.model.DataResponse;
+import io.electrum.giftcard.server.api.model.ResetRequest;
+import io.electrum.giftcard.server.api.model.ResetResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

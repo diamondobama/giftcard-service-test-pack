@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import io.electrum.giftcard.api.model.Card;
 import io.electrum.giftcard.api.model.Product;
-import io.electrum.giftcard.resource.impl.GiftcardTestServer;
+import io.electrum.giftcard.server.api.GiftcardTestServer;
 import io.electrum.giftcard.server.backend.CardLoader;
 import io.electrum.giftcard.server.backend.ProductLoader;
 import io.electrum.giftcard.server.backend.records.CardRecord;

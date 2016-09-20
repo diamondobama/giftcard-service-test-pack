@@ -1,4 +1,4 @@
-package io.electrum.giftcard.server.model;
+package io.electrum.giftcard.server.api.model;
 
 import java.util.List;
 import java.util.Objects;

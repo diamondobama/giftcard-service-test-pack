@@ -7,13 +7,13 @@ import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.electrum.giftcard.resource.impl.GiftcardTestServer;
+import io.electrum.giftcard.server.api.GiftcardTestServer;
+import io.electrum.giftcard.server.api.model.ResetRequest;
+import io.electrum.giftcard.server.api.model.ResetResponse;
+import io.electrum.giftcard.server.api.model.ResetRequest.Acknowledgments;
+import io.electrum.giftcard.server.api.model.ResetRequest.Declarations;
+import io.electrum.giftcard.server.api.model.ResetResponse.Outcomes;
 import io.electrum.giftcard.server.backend.db.MockGiftcardDb;
-import io.electrum.giftcard.server.model.ResetRequest;
-import io.electrum.giftcard.server.model.ResetResponse;
-import io.electrum.giftcard.server.model.ResetRequest.Acknowledgments;
-import io.electrum.giftcard.server.model.ResetRequest.Declarations;
-import io.electrum.giftcard.server.model.ResetResponse.Outcomes;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
 
 public class ResetHandler {

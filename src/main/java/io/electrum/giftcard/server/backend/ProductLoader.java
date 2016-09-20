@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.csvreader.CsvReader;
 
 import io.electrum.giftcard.api.model.Product;
-import io.electrum.giftcard.resource.impl.GiftcardTestServer;
+import io.electrum.giftcard.server.api.GiftcardTestServer;
 import io.electrum.giftcard.server.backend.records.ProductRecord;
 import io.electrum.giftcard.server.backend.tables.ProductTable;
 import io.electrum.vas.model.LedgerAmount;

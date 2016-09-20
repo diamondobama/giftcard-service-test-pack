@@ -11,14 +11,14 @@ import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.electrum.giftcard.resource.impl.GiftcardTestServer;
+import io.electrum.giftcard.server.api.GiftcardTestServer;
+import io.electrum.giftcard.server.api.model.CardData;
+import io.electrum.giftcard.server.api.model.DataResponse;
+import io.electrum.giftcard.server.api.model.ProductData;
 import io.electrum.giftcard.server.backend.db.MockGiftcardDb;
 import io.electrum.giftcard.server.backend.records.CardRecord;
 import io.electrum.giftcard.server.backend.records.ProductRecord;
 import io.electrum.giftcard.server.backend.tables.ProductTable;
-import io.electrum.giftcard.server.model.CardData;
-import io.electrum.giftcard.server.model.DataResponse;
-import io.electrum.giftcard.server.model.ProductData;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
 
 public class DataHandler {
