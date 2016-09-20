@@ -30,8 +30,3 @@ deployment:
     commands:
       # deploy docs to github-pages
       - ~/circlecitools/bin/deployGithubPages.sh target/devguide/site giftcard-service-test-pack-docs
-      
-  production:
-    branch: master
-    heroku:
-      appname: giftcard-service-test-pack
