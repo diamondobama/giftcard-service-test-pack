@@ -1,4 +1,4 @@
-package io.electrum.giftcard.resource.impl;
+package io.electrum.giftcard.server.api;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

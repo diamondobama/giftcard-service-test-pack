@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import io.electrum.giftcard.api.model.LookupRequest;
 import io.electrum.giftcard.api.model.LookupResponse;
-import io.electrum.giftcard.resource.impl.GiftcardTestServer;
+import io.electrum.giftcard.server.api.GiftcardTestServer;
 import io.electrum.giftcard.server.backend.db.MockGiftcardDb;
 import io.electrum.giftcard.server.backend.records.CardRecord;
 import io.electrum.giftcard.server.backend.records.LookupRecord;

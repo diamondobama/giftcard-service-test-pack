@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.electrum.giftcard.api.model.RedemptionConfirmation;
-import io.electrum.giftcard.resource.impl.GiftcardTestServer;
+import io.electrum.giftcard.server.api.GiftcardTestServer;
 import io.electrum.giftcard.server.backend.db.MockGiftcardDb;
 import io.electrum.giftcard.server.backend.records.RedemptionConfirmationRecord;
 import io.electrum.giftcard.server.backend.records.RedemptionRecord;
