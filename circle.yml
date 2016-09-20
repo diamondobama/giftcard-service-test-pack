@@ -25,7 +25,13 @@ dependencies:
     - git config --global user.name "Another Electrum Robot"
 
 deployment:
+  release:
+    branch: master
+    commands:
+      # deploy docs to github-pages
+      - ~/circlecitools/bin/deployGithubPages.sh target/devguide/site giftcard-service-test-pack-docs
+      
   production:
-    branch: test-server
+    branch: master
     heroku:
       appname: giftcard-service-test-pack
