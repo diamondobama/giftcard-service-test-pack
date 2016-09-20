@@ -41,7 +41,8 @@
     <swagger-maven-plugin-version>3.1.3</swagger-maven-plugin-version>
     <slf4j-version>1.7.5</slf4j-version>
     <logback-version>1.0.13</logback-version>
-    <giftcard-version>2.0.0</giftcard-version>
+    <giftcard-major-version>2</giftcard-major-version>
+    <giftcard-version>${giftcard-major-version}.0.0</giftcard-version>
   </properties>
 
   <dependencies>
@@ -241,6 +242,83 @@
                </goals>
             </execution>
          </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.kongchen</groupId>
+        <artifactId>swagger-maven-plugin</artifactId>
+        <version>${swagger-maven-plugin-version}</version>
+        <configuration>
+          <apiSources>
+            <apiSource>
+              <springmvc>false</springmvc>
+              <locations>io.electrum.giftcard.server.api</locations>
+              <schemes>https</schemes>
+              <host>sandbox.electrum.io</host>
+              <basePath>/giftcard/v${giftcard-major-version}</basePath>
+              <info>
+                <title>Giftcard Service Interface Test Server</title>
+                <version>${project.version}</version>
+                <description>
+                  The Electrum Giftcard Service Interface Test Server expands upon the API described in the Electrum Giftcard Service Interface.
+                  This expansion does not form part of the core Giftcard Service Interface but is described here for the benefit of anyone making use
+                  of the Giftcard Service Interface Test Server.
+                </description>
+                <contact>
+                  <email>support@electrum.co.za</email>
+                  <name>Electrum Support</name>
+                  <url>http://io.electrum</url>
+                </contact>
+                <license>
+                  <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+                  <name>Apache 2.0</name>
+                </license>
+              </info>
+              <securityDefinitions>
+                <securityDefinition>
+                  <name>httpBasic</name>
+                  <type>basic</type>
+                  <description>All requests require HTTP basic authentication, where user name equals the value used in
+                    Originator.Institution.id and password has been agreed with Electrum.
+                  </description>
+                </securityDefinition>
+              </securityDefinitions>
+              <templatePath>${basedir}/src/docs/devguide/handlebars-templates/swaggerfile.hbs</templatePath>
+              <outputPath>${project.build.directory}/devguide/testing/specification.md</outputPath>
+              <outputFormats>yaml</outputFormats>
+              <swaggerDirectory>${project.build.directory}/swagger</swaggerDirectory>
+            </apiSource>
+          </apiSources>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.4.0</version>
+        <executions>
+          <execution>
+            <id>build-devguide</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>post-integration-test</phase>
+            <configuration>
+              <executable>sh</executable>
+              <arguments>
+                <argument>run.sh</argument>
+                <argument>${basedir}</argument>
+              </arguments>
+              <workingDirectory>${basedir}/src/docs/devguide/hugo/</workingDirectory>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

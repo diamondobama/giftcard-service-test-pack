@@ -34,7 +34,7 @@ import io.swagger.annotations.Authorization;
 @Path("/giftcard/v2/testServerAdmin")
 @Consumes({ "application/json" })
 @Produces({ "application/json" })
-@Api(description = "the Giftcard API", authorizations = { @Authorization("httpBasic") })
+@Api(description = "the Giftcard API")
 public class TestServerAdminResourceImpl {
 
    static TestServerAdminResourceImpl instance = null;
@@ -50,12 +50,12 @@ public class TestServerAdminResourceImpl {
    @POST
    @Path("/reset")
    @Produces({ "application/json" })
-   @ApiOperation(value = "Reset the test data in the Giftcard Test Server.", notes = "The Test Server Admin Reset resource allows a user of the Test Server "
+   @ApiOperation(value = "Reset the test data in the Giftcard Test Server.", notes = "The Test Server Admin Reset endpoint allows a user of the Test Server "
          + "to reset the test data in the Test Server's database. This means that "
          + "all card and product data will be reset to initial settings and ALL "
          + "message data will be lost. This operation affects all data used by the "
          + "user identified by the HTTP Basic Auth username and password "
-         + "combination. This cannot be reversed.", authorizations = {
+         + "combination. <em>This cannot be reversed.</em>", authorizations = {
                @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ResetResponse.class),
          @ApiResponse(code = 400, message = "Bad Request", response = ResetResponse.class),
@@ -77,11 +77,13 @@ public class TestServerAdminResourceImpl {
    @GET
    @Path("/data")
    @Produces({ "application/json" })
-   @ApiOperation(value = "Retrieve the test data confirgured in the Giftcard Test Server.", notes = "The Test Server Admin Data resource allows a user of the Test Server "
+   @ApiOperation(value = "Retrieve the test data confirgured in the Giftcard Test Server.", notes = "The Test Server Admin Data endpoint allows a user of the Test Server "
          + "to retrieve all the card and product data currently configured in the Test "
          + "Server. This allows the user to obtain valid card and product information "
-         + "to use for testing.", authorizations = {
-               @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
+         + "to use for testing. Note that requests submitted which use cards or "
+         + "products different from those returned by this operations will not be "
+         + "recognised by the Test Server and will lead to an error response from the "
+         + "Test Server.", tags = { "Test Server Admin", })
    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = DataResponse.class),
          @ApiResponse(code = 500, message = "Internal Server Error") })
    public void data(
@@ -100,11 +102,12 @@ public class TestServerAdminResourceImpl {
    @GET
    @Path("/data/card/{cardNumber}")
    @Produces({ "application/json" })
-   @ApiOperation(value = "Retrieve the test data confirgured in the Giftcard Test Server for a certain card.", notes = "The Test "
-         + "Server Admin Data resource allows a user of the Test Server to retrieve "
-         + "the card data currently configured in the Test Server for a single "
-         + "specified card. This allows the user to obtain valid card information "
-         + "to use for testing.", authorizations = {
+   @ApiOperation(value = "Retrieve the test data configured in the Giftcard Test Server for a certain card.", notes = "The Test "
+         + "Server Admin Data endpoint allows a user of the Test Server to retrieve "
+         + "the card data and state for a card configured in the Test Server. This "
+         + "allows the user to obtain valid card information to use for testing as "
+         + "well as the opportunity to examine the state of the card as it is 'used' "
+         + "in a test.", authorizations = {
                @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = DataResponse.class),
          @ApiResponse(code = 500, message = "Internal Server Error") })
@@ -125,8 +128,8 @@ public class TestServerAdminResourceImpl {
    @GET
    @Path("/data/product/{productId}")
    @Produces({ "application/json" })
-   @ApiOperation(value = "Retrieve the test data confirgured in the Giftcard Test Server for a certain product.", notes = "The Test "
-         + "Server Admin Data resource allows a user of the Test Server to retrieve "
+   @ApiOperation(value = "Retrieve the test data configured in the Giftcard Test Server for a certain product.", notes = "The Test "
+         + "Server Admin Data endpoint allows a user of the Test Server to retrieve "
          + "the product data currently configured in the Test Server for a single "
          + "specified product. This allows the user to obtain valid product information "
          + "to use for testing.", authorizations = {
@@ -134,7 +137,7 @@ public class TestServerAdminResourceImpl {
    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = DataResponse.class),
          @ApiResponse(code = 500, message = "Internal Server Error") })
    public void singleProductData(
-         @ApiParam(value = "The PAN of the card for which data should be retrieved.", required = true) @PathParam("productId") String productId,
+         @ApiParam(value = "The ID of the product for which data should be retrieved.", required = true) @PathParam("productId") String productId,
          @Context SecurityContext securityContext,
          @Suspended AsyncResponse asyncResponse,
          @Context HttpHeaders httpHeaders,

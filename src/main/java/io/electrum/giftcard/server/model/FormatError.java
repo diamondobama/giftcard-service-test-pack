@@ -5,8 +5,13 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.electrum.vas.Utils;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+/**
+ * Detail about formatting error in a message sent to the server.
+ */
+@ApiModel(description = "Detail about formatting error in a message sent to the server.")
 public class FormatError {
 
    private String field = null;

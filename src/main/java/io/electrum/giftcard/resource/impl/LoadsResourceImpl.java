@@ -23,7 +23,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
 @Path("/giftcard/v2/loads")
-@Api(description = "the Giftcard API", authorizations = { @Authorization("httpBasic") })
+@Api(description = "the Giftcard API")
 public class LoadsResourceImpl extends LoadsResource implements ILoadsResource {
 
    static LoadsResourceImpl instance = null;

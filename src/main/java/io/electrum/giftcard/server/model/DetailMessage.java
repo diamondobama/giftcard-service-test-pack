@@ -14,8 +14,13 @@ import io.electrum.vas.model.Amounts;
 import io.electrum.vas.model.Institution;
 import io.electrum.vas.model.Originator;
 import io.electrum.vas.model.ThirdPartyIdentifier;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+/**
+ * Detail about an error encountered within the server.
+ */
+@ApiModel(description = "Detail about an error encountered within the server.")
 public class DetailMessage {
 
    private String pathId = null;
@@ -162,7 +167,8 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "The product for which the voucher should be provisioned.")
+   @ApiModelProperty(value = "The product for which the voucher should be provisioned.",
+         access="core-property")
    @JsonProperty("product")
    public Product getProduct() {
       return product;
@@ -260,7 +266,8 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "Information about the merchant who originated this request.")
+   @ApiModelProperty(value = "Information about the merchant who originated this request.",
+         access="core-property")
    @JsonProperty("originator")
    public Originator getOriginator() {
       return originator;
@@ -278,7 +285,8 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "Information about the sender of this request.")
+   @ApiModelProperty(value = "Information about the sender of this request.",
+         access="core-property")
    @JsonProperty("client")
    public Institution getClient() {
       return client;
@@ -296,7 +304,8 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "Information about the processor who should process this request.")
+   @ApiModelProperty(value = "Information about the processor who should process this request.",
+         access="core-property")
    @JsonProperty("settlementEntity")
    public Institution getSettlementEntity() {
       return settlementEntity;
@@ -314,7 +323,8 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "Information about the vendor who should process this request.")
+   @ApiModelProperty(value = "Information about the vendor who should process this request.",
+         access="core-property")
    @JsonProperty("receiver")
    public Institution getReceiver() {
       return receiver;
@@ -332,7 +342,8 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "The voucher provisioned if the vendor processed the request successfully.")
+   @ApiModelProperty(value = "The voucher provisioned if the vendor processed the request successfully.",
+         access="core-property")
    @JsonProperty("card")
    public Card getCard() {
       return card;
@@ -358,7 +369,8 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "Data to be printed on the slip in addition to the voucher instructions.")
+   @ApiModelProperty(value = "Data to be printed on the slip in addition to the voucher instructions.",
+         access="core-property")
    @JsonProperty("slipData")
    public SlipData getSlipData() {
       return slipData;
@@ -396,7 +408,8 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "The unaltered thirdPartyIdentifiers array as supplied in the related BasicResponse message. Required if thirdPartyIdentifiers field was present in the BasicResponse. If no thirdPartyIdentifiers was received in the BasicResponse or no BasicResponse was received then this should be set to the thirdPartyIdentifiers sent in the original request.")
+   @ApiModelProperty(value = "The unaltered thirdPartyIdentifiers array as supplied in the related BasicResponse message. Required if thirdPartyIdentifiers field was present in the BasicResponse. If no thirdPartyIdentifiers was received in the BasicResponse or no BasicResponse was received then this should be set to the thirdPartyIdentifiers sent in the original request.",
+         access="core-property")
    @JsonProperty("thirdPartyIdentifiers")
    public List<ThirdPartyIdentifier> getThirdPartyIdentifiers() {
       return thirdPartyIdentifiers;
