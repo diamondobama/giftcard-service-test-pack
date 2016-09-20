@@ -25,7 +25,7 @@ dependencies:
     - git config --global user.name "Another Electrum Robot"
 
 deployment:
-  release:
+  production:
     branch: master
     commands:
       # deploy docs to github-pages
