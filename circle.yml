@@ -33,13 +33,7 @@ deployment:
           echo "Found circlecitools repo - assuming this is NOT the Heroku build env."
           echo "Running docs deploy script as normal."
           echo "ls output:"
-          ls
-          echo "ls target output:"
-          ls taret
-          echo "ls target/devguide output:"
-          ls target/devguide
-          echo "ls target/devguide/site output:"
-          ls target/devguide/site
+          ls -R target | awk '/:$/&&f{s=$0;f=0}/:$/&&!f{sub(/:$/,"");s=$0;f=1;next}NF&&f{ print s"/"$0 }'
           ~/circlecitools/bin/deployGithubPages.sh target/devguide/site giftcard-service-test-pack-docs
         else
           echo "Could not find circlecitools repo - assuming this is the Heroku build env."
