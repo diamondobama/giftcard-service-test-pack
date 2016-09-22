@@ -29,7 +29,7 @@ deployment:
     branch: master
     commands:
       - | # deploy docs to github-pages but only on git and not on Heroku
-        if [[ -d "~/circlecitools/bin" ]]; then
+        if [[ $CIRCLECI ]]; then
           echo "Found circlecitools repo - assuming this is NOT the Heroku build env."
           echo "Running docs deploy script as normal."
           ~/circlecitools/bin/deployGithubPages.sh target/devguide/site giftcard-service-test-pack-docs
