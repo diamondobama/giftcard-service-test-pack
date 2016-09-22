@@ -32,8 +32,6 @@ deployment:
         if [[ $CIRCLECI ]]; then
           echo "Found circlecitools repo - assuming this is NOT the Heroku build env."
           echo "Running docs deploy script as normal."
-          echo "ls output:"
-          ls -R target | awk '/:$/&&f{s=$0;f=0}/:$/&&!f{sub(/:$/,"");s=$0;f=1;next}NF&&f{ print s"/"$0 }'
           ~/circlecitools/bin/deployGithubPages.sh target/devguide/site giftcard-service-test-pack-docs
         else
           echo "Could not find circlecitools repo - assuming this is the Heroku build env."
