@@ -308,7 +308,7 @@
             <goals>
               <goal>exec</goal>
             </goals>
-            <phase>deploy</phase>
+            <phase>install</phase>
             <configuration>
               <executable>sh</executable>
               <arguments>
