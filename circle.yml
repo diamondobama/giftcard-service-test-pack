@@ -30,5 +30,10 @@ deployment:
     commands:
       - | # deploy docs to github-pages but only on git and not on Heroku
         if [[ -d "~/circlecitools/bin" ]]; then
+          echo "Found circlecitools repo - assuming this is NOT the Heroku build env."
+          echo "Running docs deploy script as normal."
           ~/circlecitools/bin/deployGithubPages.sh target/devguide/site giftcard-service-test-pack-docs
+        else
+          echo "Could not find circlecitools repo - assuming this is the Heroku build env."
+          echo "Not running doc deploy script."
         fi
