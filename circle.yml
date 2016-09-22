@@ -28,7 +28,5 @@ deployment:
   release:
     branch: master
     commands:
-      # deploy docs to github-pages
-      - | # if [ -d "~/circlecitools/bin" ]; then
-          ~/circlecitools/bin/deployGithubPages.sh target/devguide/site giftcard-service-test-pack-docs
-        fi
+      - | # deploy docs to github-pages but only on git and not on Heroku
+        [[ -d "~/circlecitools/bin" ]] && ~/circlecitools/bin/deployGithubPages.sh target/devguide/site giftcard-service-test-pack-docs
