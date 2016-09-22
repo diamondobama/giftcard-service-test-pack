@@ -23,6 +23,11 @@ dependencies:
     # setup our git account
     - git config --global user.email "circleci@electrum.co.za"
     - git config --global user.name "Another Electrum Robot"
+    
+test:
+  override:
+    # run mvn integration-test
+    - ~/circlecitools/bin/mavenTest.sh
 
 deployment:
   release:

@@ -308,7 +308,7 @@
             <goals>
               <goal>exec</goal>
             </goals>
-            <phase>install</phase>
+            <phase>post-integration-test</phase>
             <configuration>
               <executable>sh</executable>
               <arguments>
