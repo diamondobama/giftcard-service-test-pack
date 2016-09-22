@@ -22,7 +22,7 @@ The Giftcard Service Interface Test Server keeps user data in a database held in
 The Test Server exposes new endpoints which may be used for administrative tasks on the Test Server. These are:
 
 - [/giftcard/v2/testServerAdmin/reset](/testing/specification/operations/#reset)
-- [/giftcard/v2/testServerAdmin/data](/testing/specification/operations/#reset)
+- [/giftcard/v2/testServerAdmin/data](/testing/specification/operations/#data)
 - [/giftcard/v2/testServerAdmin/data/card/{cardNumber}](/testing/specification/operations/#singlecarddata)
 - [/giftcard/v2/testServerAdmin/data/product/{productId}](/testing/specification/operations/#singleproductdata)
 
