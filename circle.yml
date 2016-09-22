@@ -29,4 +29,6 @@ deployment:
     branch: master
     commands:
       # deploy docs to github-pages
-      - ~/circlecitools/bin/deployGithubPages.sh target/devguide/site giftcard-service-test-pack-docs
+      - | # if [ -d "~/circlecitools/bin" ]; then
+          ~/circlecitools/bin/deployGithubPages.sh target/devguide/site giftcard-service-test-pack-docs
+        fi
