@@ -73,9 +73,9 @@ public class ConfirmLoadHandler {
       loadRecord.addConfirmationId(confirmation.getId().toString());
       loadRecord.setState(State.CONFIRMED);
       CardRecord cardRecord = giftcardDb.getCardRecord(loadRecord.getLoadRequest().getCard());
-      LedgerAmount balance = cardRecord.getBalance();
-      //this is the point of a confirmation - the actual balance is only updated upon confirmation
-      balance.setAmount(balance.getAmount()+loadAmount.getAmount());
+      LedgerAmount availableBalance = cardRecord.getAvailableBalance();
+      //this is the point of a confirmation - the available balance is only updated upon confirmation
+      availableBalance.setAmount(availableBalance.getAmount()+loadAmount.getAmount());
    }
 
    private Response canConfirmLoad(LoadConfirmation confirmation, MockGiftcardDb giftcardDb) {

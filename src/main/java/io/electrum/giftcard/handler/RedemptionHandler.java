@@ -21,6 +21,7 @@ import io.electrum.giftcard.server.backend.records.RedemptionRecord;
 import io.electrum.giftcard.server.backend.records.VoidRecord;
 import io.electrum.giftcard.server.backend.tables.RedemptionsTable;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
+import io.electrum.vas.model.LedgerAmount;
 
 public class RedemptionHandler {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());
@@ -106,7 +107,7 @@ public class RedemptionHandler {
          return Response.status(400).entity(GiftcardModelUtils.cardIsVoided(cardRecord, voidRecord)).build();
       }
       long requestedAmount = request.getAmounts().getRequestAmount().getAmount();
-      long balance = cardRecord.getBalance().getAmount();
+      long balance = cardRecord.getAvailableBalance().getAmount();
       if (requestedAmount > balance) {
          return Response.status(400).entity(GiftcardModelUtils.insufficientFunds(cardRecord, request)).build();
       }
@@ -147,8 +148,12 @@ public class RedemptionHandler {
       CardRecord cardRecord = giftcardDb.getCardRecord(request.getCard());
       cardRecord.addRedemptionId(request.getId().toString());
       //deduct the funds now in case we wait a long time for the reversal and the customer buys ALL the toys
-      cardRecord.getBalance()
-            .amount(cardRecord.getBalance().getAmount() - request.getAmounts().getRequestAmount().getAmount());
+      LedgerAmount availableBalance = cardRecord.getAvailableBalance();
+      availableBalance
+            .amount(availableBalance.getAmount() - request.getAmounts().getRequestAmount().getAmount());
+      LedgerAmount bookBalance = cardRecord.getBalance();
+      bookBalance
+            .amount(bookBalance.getAmount() - request.getAmounts().getRequestAmount().getAmount());
       return null;
    }
 }

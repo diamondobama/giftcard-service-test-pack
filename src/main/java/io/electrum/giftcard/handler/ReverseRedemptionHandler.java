@@ -73,8 +73,10 @@ public class ReverseRedemptionHandler {
       RedemptionRecord redemptionRecord = giftcardDb.getRedemptionsTable().getRecord(reversal.getRequestId().toString());
       RedemptionRequest redemptionRequest = redemptionRecord.getRedemptionRequest();
       CardRecord cardRecord = giftcardDb.getCardRecord(redemptionRequest.getCard());
-      LedgerAmount balance = cardRecord.getBalance();
-      balance.setAmount(balance.getAmount()+redemptionRequest.getAmounts().getRequestAmount().getAmount());
+      LedgerAmount availableBalance = cardRecord.getAvailableBalance();
+      availableBalance.setAmount(availableBalance.getAmount()+redemptionRequest.getAmounts().getRequestAmount().getAmount());
+      LedgerAmount bookBalance = cardRecord.getBalance();
+      bookBalance.setAmount(bookBalance.getAmount()+redemptionRequest.getAmounts().getRequestAmount().getAmount());
       redemptionRecord.setState(State.REVERSED);
    }
 

@@ -110,7 +110,10 @@ public class ReverseActivationHandler {
                giftcardDb.getCardTable().getRecord(activationRecord.getActivationRequest().getCard().getPan());
          cardRecord.setStatus(Status.NEW);
          cardRecord.setProductId(null);
-         cardRecord.setBalance(new LedgerAmount().amount(0l).currency("710"));
+         LedgerAmount balance = new LedgerAmount().amount(0l).currency("710");
+         LedgerAmount availableBalance = new LedgerAmount().amount(0l).currency("710");
+         cardRecord.setBalance(balance);
+         cardRecord.setAvailableBalance(availableBalance);
          cardRecord.getCard().setClearPin(cardRecord.getOrigClearPin());
          cardRecord.getCard().setEncryptedPin(cardRecord.getOrigEncPin());
       }

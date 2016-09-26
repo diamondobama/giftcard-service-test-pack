@@ -17,8 +17,6 @@ Users of the test pack must bear in mind that any data sent from the test client
 
 ## Test Client
 
-The test client is not yet available for use. This message will be removed when it is made available.
-
 The test client is provided as a collection of Postman scripts and environments which submit gift card messages to a specified end point.
 
 More information regarding the Giftcard Service Interface Test Client can be found in the [Test Client](/testing/test_client) section.

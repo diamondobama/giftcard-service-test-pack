@@ -59,7 +59,10 @@ public class CardLoader {
             }
             CardRecord cardRecord = new CardRecord(card.getPan());
             cardRecord.setCard(card);
-            cardRecord.setBalance(new LedgerAmount().amount(0l).currency("710"));
+            LedgerAmount balance = new LedgerAmount().amount(0l).currency("710");
+            LedgerAmount availableBalance = new LedgerAmount().amount(0l).currency("710");
+            cardRecord.setBalance(balance);
+            cardRecord.setAvailableBalance(availableBalance);
             cardRecord.setStatus(Status.NEW);
             cardRecord.setOrigClearPin(clearPin);
             cardRecord.setOrigEncPin(encPin);
