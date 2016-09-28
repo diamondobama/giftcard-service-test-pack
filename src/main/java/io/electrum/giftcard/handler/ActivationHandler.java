@@ -22,7 +22,6 @@ import io.electrum.giftcard.server.backend.records.VoidRecord;
 import io.electrum.giftcard.server.backend.tables.ActivationsTable;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
 import io.electrum.vas.model.Amounts;
-import io.electrum.vas.model.LedgerAmount;
 
 public class ActivationHandler {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());
@@ -121,24 +120,26 @@ public class ActivationHandler {
       if (amounts != null) {
          requestAmount = amounts.getRequestAmount().getAmount();
       }
-      cardRecord.setBalance(
-            new LedgerAmount().amount(requestAmount + productRecord.getStartingBalance().getAmount())
-                  .currency(productRecord.getStartingBalance().getCurrency()));
+      // LedgerAmount balance =
+      // new LedgerAmount().amount(requestAmount + productRecord.getStartingBalance().getAmount())
+      // .currency(productRecord.getStartingBalance().getCurrency());
+      // LedgerAmount availableBalance =
+      // new LedgerAmount().amount(requestAmount + productRecord.getStartingBalance().getAmount())
+      // .currency(productRecord.getStartingBalance().getCurrency());
+      // balance and availableBalance can be the same for now, it's not a big deal during activation
+      cardRecord.getBalance().amount(requestAmount + productRecord.getStartingBalance().getAmount());
+      cardRecord.getAvailableBalance().amount(requestAmount + productRecord.getStartingBalance().getAmount());
       cardRecord.setStatus(Status.ACTIVATED);
       cardRecord.setActivationId(request.getId().toString());
       cardRecord.setProductId(productRecord.getRecordId());
-      //update with new PIN if submitted
-      //clear PIN takes preference
+      // update with new PIN if submitted
+      // clear PIN takes preference
       String clearPin = request.getCard().getClearPin();
-      if(clearPin != null && !clearPin.isEmpty())
-      {
+      if (clearPin != null && !clearPin.isEmpty()) {
          cardRecord.getCard().setClearPin(clearPin);
-      }
-      else
-      {
+      } else {
          String encPin = request.getCard().getEncryptedPin();
-         if(encPin != null && !encPin.isEmpty())
-         {
+         if (encPin != null && !encPin.isEmpty()) {
             cardRecord.getCard().setEncryptedPin(encPin);
          }
       }

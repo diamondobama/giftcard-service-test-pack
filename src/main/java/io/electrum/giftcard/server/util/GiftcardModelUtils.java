@@ -22,6 +22,7 @@ import io.electrum.giftcard.api.model.ActivationReversal;
 import io.electrum.giftcard.api.model.Card;
 import io.electrum.giftcard.api.model.ErrorDetail;
 import io.electrum.giftcard.api.model.ErrorDetail.ErrorType;
+import io.electrum.giftcard.api.model.GiftcardAmounts;
 import io.electrum.giftcard.api.model.LoadConfirmation;
 import io.electrum.giftcard.api.model.LoadRequest;
 import io.electrum.giftcard.api.model.LoadResponse;
@@ -54,7 +55,6 @@ import io.electrum.giftcard.server.backend.records.RedemptionReversalRecord;
 import io.electrum.giftcard.server.backend.records.VoidConfirmationRecord;
 import io.electrum.giftcard.server.backend.records.VoidRecord;
 import io.electrum.giftcard.server.backend.records.VoidReversalRecord;
-import io.electrum.vas.model.Amounts;
 import io.electrum.vas.model.BasicAdvice;
 import io.electrum.vas.model.Institution;
 import io.electrum.vas.model.LedgerAmount;
@@ -111,11 +111,13 @@ public class GiftcardModelUtils {
                   .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
       rsp.setThirdPartyIdentifiers(thirdPartyIds);
       // amounts
-      Amounts amounts = req.getAmounts();
-      LedgerAmount balance = giftcardDb.getCardTable().getRecord(card.getPan()).getBalance();
+      GiftcardAmounts amounts = req.getAmounts();
+      CardRecord cardRecord = giftcardDb.getCardTable().getRecord(card.getPan());
+      LedgerAmount balance = new LedgerAmount().amount(cardRecord.getBalance().getAmount()).currency("710");
+      LedgerAmount availableBalance = new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
       if (amounts == null) {
          // no load amount requested
-         amounts = new Amounts();
+         amounts = new GiftcardAmounts();
       } else {
          // requestAmount = load amount
          LedgerAmount requestAmount = amounts.getRequestAmount();
@@ -124,6 +126,7 @@ public class GiftcardModelUtils {
          // balance = starting balance + load amount
       }
       amounts.setBalanceAmount(balance);
+      amounts.setAvailableBalance(availableBalance);
       rsp.setAmounts(amounts);
       // card
       rsp.setCard(card);
@@ -187,8 +190,10 @@ public class GiftcardModelUtils {
                   .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
       rsp.setThirdPartyIdentifiers(thirdPartyIds);
       // amounts
-      Amounts amounts = req.getAmounts();
-      LedgerAmount balance = giftcardDb.getCardTable().getRecord(card.getPan()).getBalance();
+      GiftcardAmounts amounts = req.getAmounts();
+      CardRecord cardRecord = giftcardDb.getCardTable().getRecord(card.getPan());
+      LedgerAmount balance = new LedgerAmount().amount(cardRecord.getBalance().getAmount()).currency("710");
+      LedgerAmount availableBalance = new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
       // requestAmount = load amount
       LedgerAmount requestAmount = amounts.getRequestAmount();
       if (requestAmount == null) {
@@ -196,13 +201,8 @@ public class GiftcardModelUtils {
       }
       // approvedAmount = load amount
       amounts.setApprovedAmount(requestAmount);
-      // balance = current balance + load amount
-      // calculate what the balance will be assuming the subsequent confirmation is successful. The cardRecord's balance
-      // will only be updated upon confirmation.
-      LedgerAmount slipBalance =
-            new LedgerAmount().currency(requestAmount.getCurrency())
-                  .amount(balance.getAmount() + requestAmount.getAmount());
-      amounts.setBalanceAmount(slipBalance);
+      amounts.setBalanceAmount(balance);
+      amounts.setAvailableBalance(availableBalance);
       rsp.setAmounts(amounts);
       // card
       rsp.setCard(card);
@@ -233,6 +233,7 @@ public class GiftcardModelUtils {
          giftcardDb.getProductTable().getRecord(cardRecord.getProductId()).getProduct();
       }
       LedgerAmount balance = cardRecord.getBalance();
+      LedgerAmount availableBalance = cardRecord.getAvailableBalance();
       LookupResponse rsp = new LookupResponse();
       // id
       rsp.setId(req.getId());
@@ -271,8 +272,9 @@ public class GiftcardModelUtils {
                   .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
       rsp.setThirdPartyIdentifiers(thirdPartyIds);
       // amounts
-      Amounts amounts = new Amounts();
+      GiftcardAmounts amounts = new GiftcardAmounts();
       amounts.setBalanceAmount(balance);
+      amounts.setAvailableBalance(availableBalance);
       rsp.setAmounts(amounts);
       // card
       rsp.setCard(card);
@@ -334,8 +336,10 @@ public class GiftcardModelUtils {
                   .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
       rsp.setThirdPartyIdentifiers(thirdPartyIds);
       // amounts
-      Amounts amounts = req.getAmounts();
-      LedgerAmount balance = giftcardDb.getCardTable().getRecord(card.getPan()).getBalance();
+      GiftcardAmounts amounts = req.getAmounts();
+      CardRecord cardRecord = giftcardDb.getCardTable().getRecord(card.getPan());
+      LedgerAmount balance = new LedgerAmount().amount(cardRecord.getBalance().getAmount()).currency("710");
+      LedgerAmount availableBalance = new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
       // requestAmount = load amount
       LedgerAmount requestAmount = amounts.getRequestAmount();
       if (requestAmount == null) {
@@ -346,6 +350,7 @@ public class GiftcardModelUtils {
       // balance = cardRecord's balance since it's updated in the redemption request, not confirmation (unlike for
       // loads)
       amounts.setBalanceAmount(balance);
+      amounts.setAvailableBalance(availableBalance);
       rsp.setAmounts(amounts);
       // card
       rsp.setCard(card);
@@ -409,8 +414,11 @@ public class GiftcardModelUtils {
                   .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
       rsp.setThirdPartyIdentifiers(thirdPartyIds);
       // amounts
-      Amounts amounts = new Amounts();
-      amounts.setBalanceAmount(cardRecord.getBalance());
+      GiftcardAmounts amounts = new GiftcardAmounts();
+      LedgerAmount balance = new LedgerAmount().amount(cardRecord.getBalance().getAmount()).currency("710");
+      LedgerAmount availableBalance = new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
+      amounts.setBalanceAmount(balance);
+      amounts.setAvailableBalance(availableBalance);
       rsp.setAmounts(amounts);
       // card
       rsp.setCard(card);
@@ -684,7 +692,7 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardIsVoided(CardRecord cardRecord, VoidRecord voidRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
-      errorDetail.setErrorType(ErrorType.FUNCTION_NOT_SUPPORTED);
+      errorDetail.setErrorType(ErrorType.CARD_VOIDED);
       errorDetail.setErrorMessage("Card voided");
       DetailMessage detailMessage = new DetailMessage();
       detailMessage.setFreeString("Unable to perform action because the card is already in a voided state.");
@@ -882,8 +890,8 @@ public class GiftcardModelUtils {
       detailMessage.setFreeString("The card does not have enough funds to approve the request.");
       detailMessage.setRequestId(req.getId());
       detailMessage.setCard(cardRecord.getCard());
-      Amounts reqAmounts = req.getAmounts();
-      Amounts dmAmounts = new Amounts();
+      GiftcardAmounts reqAmounts = req.getAmounts();
+      GiftcardAmounts dmAmounts = new GiftcardAmounts();
       String currency = reqAmounts.getRequestAmount().getCurrency();
       dmAmounts.setApprovedAmount(new LedgerAmount().amount(0l).currency(currency));
       dmAmounts
@@ -957,7 +965,7 @@ public class GiftcardModelUtils {
             }
          }
          // amounts
-         Amounts amounts = activationRequest.getAmounts();
+         GiftcardAmounts amounts = activationRequest.getAmounts();
          violations.addAll(validate(amounts));
          if (amounts != null) {
             violations.addAll(validate(amounts.getRequestAmount()));

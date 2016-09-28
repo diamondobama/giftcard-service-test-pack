@@ -17,6 +17,7 @@ public class CardRecord extends GiftcardRecord {
    protected String productId;
    protected Status status;
    protected LedgerAmount balance;
+   protected LedgerAmount availableBalance;
    protected String activationId;
    protected List<String> loadIds;
    protected List<String> redemptionIds;
@@ -98,6 +99,14 @@ public class CardRecord extends GiftcardRecord {
 
    public void setBalance(LedgerAmount balance) {
       this.balance = balance;
+   }
+
+   public LedgerAmount getAvailableBalance() {
+      return availableBalance;
+   }
+
+   public void setAvailableBalance(LedgerAmount availableBalance) {
+      this.availableBalance = availableBalance;
    }
 
    public String getActivationId() {

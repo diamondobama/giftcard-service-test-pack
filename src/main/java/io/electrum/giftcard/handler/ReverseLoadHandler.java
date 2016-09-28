@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.electrum.giftcard.api.model.LoadRequest;
 import io.electrum.giftcard.api.model.LoadReversal;
 import io.electrum.giftcard.server.api.GiftcardTestServer;
 import io.electrum.giftcard.server.backend.db.MockGiftcardDb;
@@ -19,6 +20,7 @@ import io.electrum.giftcard.server.backend.records.RequestRecord.State;
 import io.electrum.giftcard.server.backend.records.VoidRecord;
 import io.electrum.giftcard.server.backend.tables.LoadReversalsTable;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
+import io.electrum.vas.model.LedgerAmount;
 
 public class ReverseLoadHandler {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());
@@ -71,6 +73,12 @@ public class ReverseLoadHandler {
       // nothing actually required to do when reversing a load - just don't update the card record's balance.
       LoadRecord loadRecord = giftcardDb.getLoadsTable().getRecord(reversal.getRequestId().toString());
       loadRecord.setState(State.REVERSED);
+      LoadRequest loadRequest = loadRecord.getLoadRequest();
+      CardRecord cardRecord = giftcardDb.getCardRecord(loadRequest.getCard());
+      Long loadAmount = loadRequest.getAmounts().getApprovedAmount().getAmount();
+      LedgerAmount balance = cardRecord.getBalance();
+      //this is the actual reverse step here
+      balance.setAmount(balance.getAmount() - loadAmount);
    }
 
    private Response canReverseLoad(LoadReversal reversal, MockGiftcardDb giftcardDb) {

@@ -13,8 +13,8 @@ USER daemon
 # copy the locally built fat-jar to the image
 ADD ${project.artifactId}-${project.version}-jar-with-dependencies.jar ${project.artifactId}-${project.version}-jar-with-dependencies.jar
 
-# the server binds to 8080 - expose that port
-EXPOSE 	8080
+# the server binds to 7070 - expose that port
+EXPOSE 	7070
 
 # run the server when a container based on this image is being run
-CMD ["java", "-jar", "${project.artifactId}-${project.version}-jar-with-dependencies.jar", "8080" ]
+CMD ["java", "-jar", "${project.artifactId}-${project.version}-jar-with-dependencies.jar", "7070" ]

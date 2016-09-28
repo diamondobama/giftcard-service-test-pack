@@ -21,6 +21,7 @@ import io.electrum.giftcard.server.backend.records.LoadRecord;
 import io.electrum.giftcard.server.backend.records.VoidRecord;
 import io.electrum.giftcard.server.backend.tables.LoadsTable;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
+import io.electrum.vas.model.LedgerAmount;
 
 public class LoadHandler {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());
@@ -117,6 +118,10 @@ public class LoadHandler {
    private ErrorDetail load(LoadRequest request, MockGiftcardDb giftcardDb) {
       CardRecord cardRecord = giftcardDb.getCardRecord(request.getCard());
       cardRecord.addLoadId(request.getId().toString());
+      LedgerAmount bookBalance = cardRecord.getBalance();
+      long currentBalance = bookBalance.getAmount();
+      long requestAmount = request.getAmounts().getRequestAmount().getAmount();
+      bookBalance.setAmount(currentBalance + requestAmount);
       return null;
    }
 }
