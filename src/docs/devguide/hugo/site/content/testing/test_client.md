@@ -5,7 +5,7 @@ menu:
     weight: 30
 ---
 
-The Giftcard Service Interface Test Client is a collection of Postman scripts which are designed to send specific requests to the Giftcard Service Interface server implementation under test. The Postman scripts also test the responses received from the server and examine them for expected values.
+The Giftcard Service Interface Test Client is a collection of [Postman](https://www.getpostman.com) scripts which are designed to send specific requests to the Giftcard Service Interface server implementation under test. The [Postman](https://www.getpostman.com) scripts also test the responses received from the server and examine them for expected values. The [Postman](https://www.getpostman.com) scripts can be downloaded from [Electrum's Git repo](https://github.com/electrumpayments/giftcard-service-test-pack/tree/master/test/postman).
 
 ## Operation
 
