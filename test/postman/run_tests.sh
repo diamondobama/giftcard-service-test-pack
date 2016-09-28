@@ -3,8 +3,8 @@ basedir=$1
 testdir=$2
 echo "Starting docker container"
 docker build -t="giftcard-service-test-pack" ${basedir}/target
-docker run -d -p 8080:8080 --name giftcard-service-test-pack_container giftcard-service-test-pack
-/git/circlecitools/bin/waitForServer.sh localhost:8080 5000
+docker run -d -p 7070:7070 --name giftcard-service-test-pack_container giftcard-service-test-pack
+/git/circlecitools/bin/waitForServer.sh localhost:7070 5000
 ${testdir}/run_newman.sh ${testdir}
 rc=$?
 echo "Cleaning up Docker"
