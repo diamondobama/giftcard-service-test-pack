@@ -26,7 +26,13 @@ dependencies:
     
 test:
   override:
-    # run mvn integration-test
+    - ~/circlecitools/bin/mavenTest.sh
+    - mvn clean install
+    - docker build -t="airtime-service-test-pack" ./target
+    - docker run -d -p 8080:8080 --name airtime-service-test-pack_container airtime-service-test-pack
+    - ~/circlecitools/bin/waitForServer.sh localhost:8080 5000
+    - ~/circlecitools/bin/newmanTest.sh Airtime.postman_collection.json localhost.postman_environment.json
+      # run mvn integration-test
     - ~/circlecitools/bin/mavenTest.sh
 
 deployment:
