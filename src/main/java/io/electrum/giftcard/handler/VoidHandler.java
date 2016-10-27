@@ -1,14 +1,5 @@
 package io.electrum.giftcard.handler;
 
-import java.util.UUID;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.electrum.giftcard.api.model.ErrorDetail;
 import io.electrum.giftcard.api.model.VoidRequest;
 import io.electrum.giftcard.api.model.VoidResponse;
@@ -22,10 +13,17 @@ import io.electrum.giftcard.server.backend.records.VoidRecord;
 import io.electrum.giftcard.server.backend.tables.VoidsTable;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class VoidHandler {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());
 
-   public Response handle(UUID requestId, VoidRequest request, HttpHeaders httpHeaders, UriInfo uriInfo) {
+   public Response handle(String requestId, VoidRequest request, HttpHeaders httpHeaders, UriInfo uriInfo) {
       VoidRecord voidRecord = null;
       try {
          // check its a valid request
@@ -43,12 +41,12 @@ public class VoidHandler {
          String password = GiftcardModelUtils.getPasswordFromAuth(authString);
          MockGiftcardDb giftcardDb = GiftcardTestServer.getBackend().getDbForUser(username, password);
          // check for duplicates
-         if (giftcardDb.doesUuidExist(requestId.toString())) {
-            return Response.status(400).entity(GiftcardModelUtils.duplicateRequest(requestId.toString())).build();
+         if (giftcardDb.doesUuidExist(requestId)) {
+            return Response.status(400).entity(GiftcardModelUtils.duplicateRequest(request, requestId)).build();
          }
          // record request
          VoidsTable voidsTable = giftcardDb.getVoidsTable();
-         voidRecord = new VoidRecord(requestId.toString());
+         voidRecord = new VoidRecord(requestId);
          voidRecord.setVoidRequest(request);
          voidsTable.putRecord(voidRecord);
          // check card can be activated
@@ -72,7 +70,7 @@ public class VoidHandler {
          for (StackTraceElement ste : e.getStackTrace()) {
             log.debug(ste.toString());
          }
-         Response rsp = Response.serverError().entity(GiftcardModelUtils.exceptionResponse()).build();
+         Response rsp = Response.serverError().entity(GiftcardModelUtils.exceptionResponse(request)).build();
          return rsp;
       } finally {
          if (voidRecord != null) {
@@ -92,17 +90,23 @@ public class VoidHandler {
          ActivationRecord activationRecord = giftcardDb.getActivationsTable().getRecord(cardRecord.getActivationId());
          ActivationReversalRecord activationReversalRecord = null;
          if (activationRecord != null) {
-            activationReversalRecord = giftcardDb.getActivationReversalsTable().getRecord(activationRecord.getLastReversalId());
+            activationReversalRecord =
+                  giftcardDb.getActivationReversalsTable().getRecord(activationRecord.getLastReversalId());
          }
          return Response.status(400)
-               .entity(GiftcardModelUtils.cardIsNotYetActive(cardRecord, activationRecord, activationReversalRecord))
+               .entity(
+                     GiftcardModelUtils.cardIsNotYetActive(
+                           request,
+                           cardRecord,
+                           activationRecord,
+                           activationReversalRecord))
                .build();
       case ACTIVATED_CONFIRMED:
          break;
       case VOIDED:
       case VOIDED_CONFIRMED:
          VoidRecord voidRecord = giftcardDb.getVoidsTable().getRecord(cardRecord.getVoidId());
-         return Response.status(400).entity(GiftcardModelUtils.cardIsVoided(cardRecord, voidRecord)).build();
+         return Response.status(400).entity(GiftcardModelUtils.cardIsVoided(request, cardRecord, voidRecord)).build();
       }
       if (!cardRecord.expiryDateCorrect(request.getCard().getExpiryDate())) {
          return Response.status(400).entity(GiftcardModelUtils.cardExpiryInvalid(cardRecord, request)).build();
@@ -116,7 +120,7 @@ public class VoidHandler {
    private ErrorDetail voidCard(VoidRequest request, MockGiftcardDb giftcardDb) {
       CardRecord cardRecord = giftcardDb.getCardRecord(request.getCard());
       cardRecord.setStatus(Status.VOIDED);
-      cardRecord.setVoidId(request.getId().toString());
+      cardRecord.setVoidId(request.getId());
       return null;
    }
 }

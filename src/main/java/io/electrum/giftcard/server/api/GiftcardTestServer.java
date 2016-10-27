@@ -1,5 +1,7 @@
 package io.electrum.giftcard.server.api;
 
+import io.electrum.giftcard.server.backend.GiftcardBackend;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -17,8 +19,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-
-import io.electrum.giftcard.server.backend.GiftcardBackend;
 
 public class GiftcardTestServer extends ResourceConfig {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());

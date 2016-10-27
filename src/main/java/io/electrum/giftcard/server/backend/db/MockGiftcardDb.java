@@ -1,10 +1,5 @@
 package io.electrum.giftcard.server.backend.db;
 
-import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.electrum.giftcard.api.model.Card;
 import io.electrum.giftcard.api.model.Product;
 import io.electrum.giftcard.server.api.GiftcardTestServer;
@@ -27,6 +22,11 @@ import io.electrum.giftcard.server.backend.tables.RedemptionsTable;
 import io.electrum.giftcard.server.backend.tables.VoidConfirmationsTable;
 import io.electrum.giftcard.server.backend.tables.VoidReversalsTable;
 import io.electrum.giftcard.server.backend.tables.VoidsTable;
+
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MockGiftcardDb {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class);

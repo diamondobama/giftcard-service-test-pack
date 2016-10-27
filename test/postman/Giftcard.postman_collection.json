@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "Giftcard",
-		"_postman_id": "f46f6bb6-795d-b0f5-fda7-ac8966635bbd",
+		"_postman_id": "ef64858a-cf32-4585-cb94-7116a8bfb763",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -152,7 +152,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"activationRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -302,7 +302,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"activationRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -402,7 +402,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"activationRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -452,7 +452,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is RedemptionRequest\"] = errorDetail.requestType === \"REDEMPTION_REQUEST\";"
 							}
 						},
 						{
@@ -502,7 +502,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is RedemptionRequest\"] = errorDetail.requestType === \"REDEMPTION_REQUEST\";"
 							}
 						},
 						{
@@ -776,7 +776,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"activationRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -976,7 +976,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"loadRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -1176,7 +1176,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"redemptionRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -1373,6 +1373,13 @@
 					"name": "Void Confirmation",
 					"event": [
 						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"voidRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
+							}
+						},
+						{
 							"listen": "prerequest",
 							"script": {
 								"type": "text/javascript",
@@ -1543,7 +1550,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_NOT_ACTIVATED\"] = errorDetail.errorType === \"CARD_NOT_ACTIVATED\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_NOT_ACTIVATED\"] = errorDetail.errorType === \"CARD_NOT_ACTIVATED\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is Redemption Request\"] = errorDetail.requestType === \"REDEMPTION_REQUEST\";"
 							}
 						},
 						{
@@ -1593,7 +1600,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"activationRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -1693,7 +1700,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INSUFFICIENT_FUNDS\"] = errorDetail.errorType === \"INSUFFICIENT_FUNDS\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INSUFFICIENT_FUNDS\"] = errorDetail.errorType === \"INSUFFICIENT_FUNDS\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is Redemption Request\"] = errorDetail.requestType === \"REDEMPTION_REQUEST\";"
 							}
 						},
 						{
@@ -1917,7 +1924,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_ACTIVATED\"] = errorDetail.errorType === \"CARD_ACTIVATED\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_ACTIVATED\"] = errorDetail.errorType === \"CARD_ACTIVATED\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is Activation Request\"] = errorDetail.requestType === \"ACTIVATION_REQUEST\";"
 							}
 						},
 						{
@@ -2017,7 +2024,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"activationRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -2067,7 +2074,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is GENERAL_ERROR\"] = errorDetail.errorType === \"GENERAL_ERROR\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is GENERAL_ERROR\"] = errorDetail.errorType === \"GENERAL_ERROR\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is ActivationConfirmationRequest\"] = errorDetail.requestType === \"ACTIVATION_CONFIRMATION\";"
 							}
 						},
 						{
@@ -2117,7 +2124,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_NOT_ACTIVATED\"] = errorDetail.errorType === \"CARD_NOT_ACTIVATED\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_NOT_ACTIVATED\"] = errorDetail.errorType === \"CARD_NOT_ACTIVATED\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is RedemptionRequest\"] = errorDetail.requestType === \"REDEMPTION_REQUEST\";"
 							}
 						},
 						{
@@ -2317,7 +2324,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"activationRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -2517,7 +2524,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INSUFFICIENT_FUNDS\"] = errorDetail.errorType === \"INSUFFICIENT_FUNDS\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INSUFFICIENT_FUNDS\"] = errorDetail.errorType === \"INSUFFICIENT_FUNDS\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is RedemptionRequest\"] = errorDetail.requestType === \"REDEMPTION_REQUEST\";"
 							}
 						},
 						{
@@ -2567,7 +2574,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"loadRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -2617,7 +2624,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is GENERAL_ERROR\"] = errorDetail.errorType === \"GENERAL_ERROR\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is GENERAL_ERROR\"] = errorDetail.errorType === \"GENERAL_ERROR\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is ActivationConfirmationRequest\"] = errorDetail.requestType === \"LOAD_CONFIRMATION\";"
 							}
 						},
 						{
@@ -2817,7 +2824,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"redemptionRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -2867,7 +2874,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is GENERAL_ERROR\"] = errorDetail.errorType === \"GENERAL_ERROR\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is GENERAL_ERROR\"] = errorDetail.errorType === \"GENERAL_ERROR\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is ActivationConfirmationRequest\"] = errorDetail.requestType === \"REDEMPTION_CONFIRMATION\";"
 							}
 						},
 						{
@@ -3017,7 +3024,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_VOIDED\"] = errorDetail.errorType === \"CARD_VOIDED\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_VOIDED\"] = errorDetail.errorType === \"CARD_VOIDED\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is RedemptionRequest\"] = errorDetail.requestType === \"REDEMPTION_REQUEST\";"
 							}
 						},
 						{
@@ -3117,7 +3124,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"voidRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -3391,7 +3398,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_EXPIRED\"] = errorDetail.errorType === \"CARD_EXPIRED\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_EXPIRED\"] = errorDetail.errorType === \"CARD_EXPIRED\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is ActivationRequest\"] = errorDetail.requestType === \"ACTIVATION_REQUEST\";"
 							}
 						},
 						{
@@ -3491,7 +3498,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_EXPIRED\"] = errorDetail.errorType === \"CARD_EXPIRED\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is CARD_EXPIRED\"] = errorDetail.errorType === \"CARD_EXPIRED\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is ActivationRequest\"] = errorDetail.requestType === \"ACTIVATION_REQUEST\";"
 							}
 						},
 						{
@@ -3665,7 +3672,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"activationRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -3765,7 +3772,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;"
+								"exec": "tests[\"Status code is 202\"] = responseCode.code === 202;\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Advice Response id is not null\"] = jsonData.id !== null;\ntests[\"Original Response id is not null\"] = jsonData.requestId !== null;\ntests[\"Original id equals request id\"] = jsonData.requestId === postman.getEnvironmentVariable(\"activationRequestUuid\");\ntests[\"Advice Response id equals request id\"] = jsonData.id === postman.getEnvironmentVariable(\"adviceUuid\");"
 							}
 						},
 						{
@@ -3815,7 +3822,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is RedemptionRequest\"] = errorDetail.requestType === \"REDEMPTION_REQUEST\";"
 							}
 						},
 						{
@@ -3865,7 +3872,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is RedemptionRequest\"] = errorDetail.requestType === \"REDEMPTION_REQUEST\";"
 							}
 						},
 						{
@@ -3915,7 +3922,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is RedemptionRequest\"] = errorDetail.requestType === \"REDEMPTION_REQUEST\";"
 							}
 						},
 						{
@@ -3965,7 +3972,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";"
+								"exec": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\nvar errorDetail = JSON.parse(responseBody);\ntests[\"Error type is INCORRECT_PIN\"] = errorDetail.errorType === \"INCORRECT_PIN\";\ntests[\"Test that requestType is not null\"] = errorDetail.requestType !== null;\ntests[\"Test that requestType is RedemptionRequest\"] = errorDetail.requestType === \"REDEMPTION_REQUEST\";"
 							}
 						},
 						{

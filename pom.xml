@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.electrum</groupId>
   <artifactId>giftcard-service-test-pack</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
   <packaging>jar</packaging>
   <name>Giftcard Test Pack</name>
   <description>Server and Postman scripts to test Giftcard Service Interface implementaitons</description>
@@ -41,8 +41,8 @@
     <swagger-maven-plugin-version>3.1.3</swagger-maven-plugin-version>
     <slf4j-version>1.7.5</slf4j-version>
     <logback-version>1.0.13</logback-version>
-    <giftcard-major-version>2</giftcard-major-version>
-    <giftcard-version>${giftcard-major-version}.1.0</giftcard-version>
+    <giftcard-major-version>3</giftcard-major-version>
+    <giftcard-version>${giftcard-major-version}.0.0</giftcard-version>
   </properties>
 
   <dependencies>
@@ -96,7 +96,8 @@
       <artifactId>jetty-webapp</artifactId>
       <version>${jetty-version}</version>
     </dependency>
-    <!-- --><dependency>
+    <!-- -->
+    <dependency>
       <groupId>org.glassfish.jersey.containers</groupId>
       <artifactId>jersey-container-servlet</artifactId>
       <version>${jersey-version}</version>
@@ -218,30 +219,30 @@
         </configuration>
       </plugin>
       <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>2.2.1</version>
-          <executions>
-              <execution>
-                  <id>attach-sources</id>
-                  <goals>
-                      <goal>jar-no-fork</goal>
-                  </goals>
-              </execution>
-          </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
-         <groupId>org.apache.maven.plugins</groupId>
-         <artifactId>maven-javadoc-plugin</artifactId>
-         <version>2.9</version>
-         <executions>
-            <execution>
-               <id>attach-javadocs</id>
-               <goals>
-                  <goal>jar</goal>
-               </goals>
-            </execution>
-         </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>com.github.kongchen</groupId>
@@ -259,8 +260,10 @@
                 <title>Giftcard Service Interface Test Server</title>
                 <version>${project.version}</version>
                 <description>
-                  The Electrum Giftcard Service Interface Test Server expands upon the API described in the Electrum Giftcard Service Interface.
-                  This expansion does not form part of the core Giftcard Service Interface but is described here for the benefit of anyone making use
+                  The Electrum Giftcard Service Interface Test Server expands upon the API described in the Electrum
+                  Giftcard Service Interface.
+                  This expansion does not form part of the core Giftcard Service Interface but is described here for the
+                  benefit of anyone making use
                   of the Giftcard Service Interface Test Server.
                 </description>
                 <contact>

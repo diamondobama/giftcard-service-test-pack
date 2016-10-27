@@ -1,6 +1,15 @@
 package io.electrum.giftcard.server.api;
 
-import java.util.UUID;
+import io.electrum.giftcard.handler.GiftcardMessageHandlerFactory;
+import io.electrum.giftcard.server.api.model.DataResponse;
+import io.electrum.giftcard.server.api.model.ResetRequest;
+import io.electrum.giftcard.server.api.model.ResetResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -19,17 +28,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.electrum.giftcard.handler.GiftcardMessageHandlerFactory;
-import io.electrum.giftcard.server.api.model.DataResponse;
-import io.electrum.giftcard.server.api.model.ResetRequest;
-import io.electrum.giftcard.server.api.model.ResetResponse;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
 
 @Path("/giftcard/v2/testServerAdmin")
 @Consumes({ "application/json" })
@@ -55,8 +53,7 @@ public class TestServerAdminResourceImpl {
          + "all card and product data will be reset to initial settings and ALL "
          + "message data will be lost. This operation affects all data used by the "
          + "user identified by the HTTP Basic Auth username and password "
-         + "combination. <em>This cannot be reversed.</em>", authorizations = {
-               @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
+         + "combination. <em>This cannot be reversed.</em>", authorizations = { @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ResetResponse.class),
          @ApiResponse(code = 400, message = "Bad Request", response = ResetResponse.class),
          @ApiResponse(code = 500, message = "Internal Server Error", response = ResetResponse.class) })
@@ -82,8 +79,7 @@ public class TestServerAdminResourceImpl {
          + "Server. This allows the user to obtain valid card and product information "
          + "to use for testing. Note that requests submitted which use cards or "
          + "products different from those returned by this operations will not be "
-         + "recognised by the Test Server and will lead to an error response from the "
-         + "Test Server.", tags = { "Test Server Admin", })
+         + "recognised by the Test Server and will lead to an error response from the " + "Test Server.", tags = { "Test Server Admin", })
    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = DataResponse.class),
          @ApiResponse(code = 500, message = "Internal Server Error") })
    public void data(
@@ -106,9 +102,7 @@ public class TestServerAdminResourceImpl {
          + "Server Admin Data endpoint allows a user of the Test Server to retrieve "
          + "the card data and state for a card configured in the Test Server. This "
          + "allows the user to obtain valid card information to use for testing as "
-         + "well as the opportunity to examine the state of the card as it is 'used' "
-         + "in a test.", authorizations = {
-               @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
+         + "well as the opportunity to examine the state of the card as it is 'used' " + "in a test.", authorizations = { @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = DataResponse.class),
          @ApiResponse(code = 500, message = "Internal Server Error") })
    public void singleCardData(
@@ -131,9 +125,7 @@ public class TestServerAdminResourceImpl {
    @ApiOperation(value = "Retrieve the test data configured in the Giftcard Test Server for a certain product.", notes = "The Test "
          + "Server Admin Data endpoint allows a user of the Test Server to retrieve "
          + "the product data currently configured in the Test Server for a single "
-         + "specified product. This allows the user to obtain valid product information "
-         + "to use for testing.", authorizations = {
-               @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
+         + "specified product. This allows the user to obtain valid product information " + "to use for testing.", authorizations = { @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = DataResponse.class),
          @ApiResponse(code = 500, message = "Internal Server Error") })
    public void singleProductData(
@@ -145,7 +137,8 @@ public class TestServerAdminResourceImpl {
          @Context HttpServletRequest httpServletRequest) {
       log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
       log.debug(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
-      Response rsp = GiftcardMessageHandlerFactory.getDataHandler().handleProductRequest(productId, httpHeaders, uriInfo);
+      Response rsp =
+            GiftcardMessageHandlerFactory.getDataHandler().handleProductRequest(productId, httpHeaders, uriInfo);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
       asyncResponse.resume(rsp);
    }

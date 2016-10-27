@@ -1,20 +1,5 @@
 package io.electrum.giftcard.server.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.ws.rs.core.Response;
-
-import org.glassfish.jersey.internal.util.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.electrum.giftcard.api.model.ActivationConfirmation;
 import io.electrum.giftcard.api.model.ActivationRequest;
 import io.electrum.giftcard.api.model.ActivationResponse;
@@ -60,11 +45,27 @@ import io.electrum.vas.model.Institution;
 import io.electrum.vas.model.LedgerAmount;
 import io.electrum.vas.model.Merchant;
 import io.electrum.vas.model.Originator;
+import io.electrum.vas.model.SlipLine;
 import io.electrum.vas.model.Tender;
 import io.electrum.vas.model.ThirdPartyIdentifier;
+import io.electrum.vas.model.Transaction;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.internal.util.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GiftcardModelUtils {
-   private static List<String> messageLines;
+   private static List<SlipLine> messageLines;
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());
 
    public static ActivationResponse activationRspFromReq(MockGiftcardDb giftcardDb, ActivationRequest req) {
@@ -103,18 +104,17 @@ public class GiftcardModelUtils {
       if (thirdPartyIds == null) {
          new ArrayList<ThirdPartyIdentifier>();
       }
-      thirdPartyIds.add(
-            new ThirdPartyIdentifier().institutionId(settlementEntity.getId())
-                  .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
-      thirdPartyIds.add(
-            new ThirdPartyIdentifier().institutionId(receiver.getId())
-                  .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
+      thirdPartyIds.add(new ThirdPartyIdentifier().institutionId(settlementEntity.getId()).transactionIdentifier(
+            RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
+      thirdPartyIds.add(new ThirdPartyIdentifier().institutionId(receiver.getId()).transactionIdentifier(
+            RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
       rsp.setThirdPartyIdentifiers(thirdPartyIds);
       // amounts
       GiftcardAmounts amounts = req.getAmounts();
       CardRecord cardRecord = giftcardDb.getCardTable().getRecord(card.getPan());
       LedgerAmount balance = new LedgerAmount().amount(cardRecord.getBalance().getAmount()).currency("710");
-      LedgerAmount availableBalance = new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
+      LedgerAmount availableBalance =
+            new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
       if (amounts == null) {
          // no load amount requested
          amounts = new GiftcardAmounts();
@@ -135,10 +135,10 @@ public class GiftcardModelUtils {
       // product
       rsp.setProduct(product);
       // slipData
-      messageLines = new ArrayList<String>();
-      messageLines.add("Congratulations!");
-      messageLines.add("You can redeem your giftcard for cool stuff.");
-      messageLines.add("For queries quote the issuer reference below:");
+      messageLines = new ArrayList<SlipLine>();
+      messageLines.add(new SlipLine().text("Congratulations!"));
+      messageLines.add(new SlipLine().text("You can redeem your giftcard for cool stuff."));
+      messageLines.add(new SlipLine().text("For queries quote the issuer reference below:"));
       SlipData slipData = new SlipData();
       slipData.setMessageLines(messageLines);
       slipData.setIssuerReference(RandomData.random09AZ((int) ((Math.random() * 20) + 1)));
@@ -182,18 +182,17 @@ public class GiftcardModelUtils {
       if (thirdPartyIds == null) {
          new ArrayList<ThirdPartyIdentifier>();
       }
-      thirdPartyIds.add(
-            new ThirdPartyIdentifier().institutionId(settlementEntity.getId())
-                  .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
-      thirdPartyIds.add(
-            new ThirdPartyIdentifier().institutionId(receiver.getId())
-                  .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
+      thirdPartyIds.add(new ThirdPartyIdentifier().institutionId(settlementEntity.getId()).transactionIdentifier(
+            RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
+      thirdPartyIds.add(new ThirdPartyIdentifier().institutionId(receiver.getId()).transactionIdentifier(
+            RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
       rsp.setThirdPartyIdentifiers(thirdPartyIds);
       // amounts
       GiftcardAmounts amounts = req.getAmounts();
       CardRecord cardRecord = giftcardDb.getCardTable().getRecord(card.getPan());
       LedgerAmount balance = new LedgerAmount().amount(cardRecord.getBalance().getAmount()).currency("710");
-      LedgerAmount availableBalance = new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
+      LedgerAmount availableBalance =
+            new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
       // requestAmount = load amount
       LedgerAmount requestAmount = amounts.getRequestAmount();
       if (requestAmount == null) {
@@ -211,15 +210,25 @@ public class GiftcardModelUtils {
       // product
       rsp.setProduct(product);
       // slipData
-      messageLines = new ArrayList<String>();
-      messageLines.add("Congratulations!");
-      messageLines.add("Your card has been loaded.");
-      messageLines.add("For queries quote the issuer reference below:");
+      messageLines = new ArrayList<SlipLine>();
+      messageLines.add(new SlipLine().text("Congratulations!"));
+      messageLines.add(new SlipLine().text("Your card has been loaded."));
+      messageLines.add(new SlipLine().text("For queries quote the issuer reference below:"));
       SlipData slipData = new SlipData();
       slipData.setMessageLines(messageLines);
       slipData.setIssuerReference(RandomData.random09AZ((int) ((Math.random() * 20) + 1)));
       rsp.setSlipData(slipData);
       return rsp;
+   }
+
+   public static BasicAdvice loadConfirmResponse(LoadConfirmation adviceRequest) {
+      BasicAdvice ba =
+            new BasicAdvice().id(adviceRequest.getId())
+                  .requestId(adviceRequest.getRequestId())
+                  .time(adviceRequest.getTime())
+                  .transactionIdentifiers(adviceRequest.getThirdPartyIdentifiers());
+
+      return ba;
    }
 
    public static LookupResponse lookupRspFromReq(MockGiftcardDb giftcardDb, LookupRequest req) {
@@ -264,12 +273,10 @@ public class GiftcardModelUtils {
       if (thirdPartyIds == null) {
          new ArrayList<ThirdPartyIdentifier>();
       }
-      thirdPartyIds.add(
-            new ThirdPartyIdentifier().institutionId(settlementEntity.getId())
-                  .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
-      thirdPartyIds.add(
-            new ThirdPartyIdentifier().institutionId(receiver.getId())
-                  .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
+      thirdPartyIds.add(new ThirdPartyIdentifier().institutionId(settlementEntity.getId()).transactionIdentifier(
+            RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
+      thirdPartyIds.add(new ThirdPartyIdentifier().institutionId(receiver.getId()).transactionIdentifier(
+            RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
       rsp.setThirdPartyIdentifiers(thirdPartyIds);
       // amounts
       GiftcardAmounts amounts = new GiftcardAmounts();
@@ -283,8 +290,8 @@ public class GiftcardModelUtils {
       // product
       rsp.setProduct(product);
       // slipData
-      messageLines = new ArrayList<String>();
-      messageLines.add("For queries quote the issuer reference below:");
+      messageLines = new ArrayList<SlipLine>();
+      messageLines.add(new SlipLine().text("For queries quote the issuer reference below:"));
       SlipData slipData = new SlipData();
       slipData.setMessageLines(messageLines);
       slipData.setIssuerReference(RandomData.random09AZ((int) ((Math.random() * 20) + 1)));
@@ -328,18 +335,17 @@ public class GiftcardModelUtils {
       if (thirdPartyIds == null) {
          new ArrayList<ThirdPartyIdentifier>();
       }
-      thirdPartyIds.add(
-            new ThirdPartyIdentifier().institutionId(settlementEntity.getId())
-                  .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
-      thirdPartyIds.add(
-            new ThirdPartyIdentifier().institutionId(receiver.getId())
-                  .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
+      thirdPartyIds.add(new ThirdPartyIdentifier().institutionId(settlementEntity.getId()).transactionIdentifier(
+            RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
+      thirdPartyIds.add(new ThirdPartyIdentifier().institutionId(receiver.getId()).transactionIdentifier(
+            RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
       rsp.setThirdPartyIdentifiers(thirdPartyIds);
       // amounts
       GiftcardAmounts amounts = req.getAmounts();
       CardRecord cardRecord = giftcardDb.getCardTable().getRecord(card.getPan());
       LedgerAmount balance = new LedgerAmount().amount(cardRecord.getBalance().getAmount()).currency("710");
-      LedgerAmount availableBalance = new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
+      LedgerAmount availableBalance =
+            new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
       // requestAmount = load amount
       LedgerAmount requestAmount = amounts.getRequestAmount();
       if (requestAmount == null) {
@@ -359,10 +365,10 @@ public class GiftcardModelUtils {
       // product
       rsp.setProduct(product);
       // slipData
-      messageLines = new ArrayList<String>();
-      messageLines.add("Congratulations!");
-      messageLines.add("Your purchase was successful.");
-      messageLines.add("For queries quote the issuer reference below:");
+      messageLines = new ArrayList<SlipLine>();
+      messageLines.add(new SlipLine().text("Congratulations!"));
+      messageLines.add(new SlipLine().text("Your purchase was successful."));
+      messageLines.add(new SlipLine().text("For queries quote the issuer reference below:"));
       SlipData slipData = new SlipData();
       slipData.setMessageLines(messageLines);
       slipData.setIssuerReference(RandomData.random09AZ((int) ((Math.random() * 20) + 1)));
@@ -406,17 +412,16 @@ public class GiftcardModelUtils {
       if (thirdPartyIds == null) {
          new ArrayList<ThirdPartyIdentifier>();
       }
-      thirdPartyIds.add(
-            new ThirdPartyIdentifier().institutionId(settlementEntity.getId())
-                  .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
-      thirdPartyIds.add(
-            new ThirdPartyIdentifier().institutionId(receiver.getId())
-                  .transactionIdentifier(RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
+      thirdPartyIds.add(new ThirdPartyIdentifier().institutionId(settlementEntity.getId()).transactionIdentifier(
+            RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
+      thirdPartyIds.add(new ThirdPartyIdentifier().institutionId(receiver.getId()).transactionIdentifier(
+            RandomData.random09AZ((int) ((Math.random() * 20) + 1))));
       rsp.setThirdPartyIdentifiers(thirdPartyIds);
       // amounts
       GiftcardAmounts amounts = new GiftcardAmounts();
       LedgerAmount balance = new LedgerAmount().amount(cardRecord.getBalance().getAmount()).currency("710");
-      LedgerAmount availableBalance = new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
+      LedgerAmount availableBalance =
+            new LedgerAmount().amount(cardRecord.getAvailableBalance().getAmount()).currency("710");
       amounts.setBalanceAmount(balance);
       amounts.setAvailableBalance(availableBalance);
       rsp.setAmounts(amounts);
@@ -429,9 +434,9 @@ public class GiftcardModelUtils {
       Product product = giftcardDb.getProductTable().getRecord(productId).getProduct();
       rsp.setProduct(product);
       // slipData
-      messageLines = new ArrayList<String>();
-      messageLines.add("Your card has been voided.");
-      messageLines.add("For queries quote the issuer reference below:");
+      messageLines = new ArrayList<SlipLine>();
+      messageLines.add(new SlipLine().text("Your card has been voided."));
+      messageLines.add(new SlipLine().text("For queries quote the issuer reference below:"));
       SlipData slipData = new SlipData();
       slipData.setMessageLines(messageLines);
       slipData.setIssuerReference(RandomData.random09AZ((int) ((Math.random() * 20) + 1)));
@@ -441,6 +446,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail unableToLocateRecord(BasicAdvice advice) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) advice)));
+      setErrorDetailIds(advice, errorDetail);
       errorDetail.setErrorType(ErrorType.UNABLE_TO_LOCATE_RECORD);
       errorDetail.setErrorMessage("No request record.");
       DetailMessage detailMessage = new DetailMessage();
@@ -450,8 +457,10 @@ public class GiftcardModelUtils {
       return errorDetail;
    }
 
-   public static ErrorDetail duplicateRequest(String uuid) {
+   public static ErrorDetail duplicateRequest(Object req, String uuid) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.DUPLICATE_RECORD);
       errorDetail.setErrorMessage("Repeated UUID");
       DetailMessage detailMessage = new DetailMessage();
@@ -460,8 +469,10 @@ public class GiftcardModelUtils {
       return errorDetail;
    }
 
-   public static ErrorDetail exceptionResponse() {
+   public static ErrorDetail exceptionResponse(Object req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.GENERAL_ERROR);
       errorDetail.setErrorMessage("Server Error");
       DetailMessage detailMessage = new DetailMessage();
@@ -470,8 +481,10 @@ public class GiftcardModelUtils {
       return errorDetail;
    }
 
-   public static ErrorDetail generalError() {
+   public static ErrorDetail generalError(Object req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.GENERAL_ERROR);
       errorDetail.setErrorMessage("Server Error");
       DetailMessage detailMessage = new DetailMessage();
@@ -482,15 +495,16 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail requestBeingProcessed(BasicAdvice advice) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) advice)));
+      setErrorDetailIds(advice, errorDetail);
       errorDetail.setErrorType(ErrorType.GENERAL_ERROR);
       errorDetail.setErrorMessage("Request in progress");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The request associated with this advice is currently being processed "
-                  + "and the advice cannot be processed. The advice should be resubmitted. "
-                  + "Note that this is conceivable for timeout reversals but if this is in response "
-                  + "to a confirmation it signifies a potential bug in the client since a "
-                  + "confirmation was submitted prior to receiving a response to the original " + "request.");
+      detailMessage.setFreeString("The request associated with this advice is currently being processed "
+            + "and the advice cannot be processed. The advice should be resubmitted. "
+            + "Note that this is conceivable for timeout reversals but if this is in response "
+            + "to a confirmation it signifies a potential bug in the client since a "
+            + "confirmation was submitted prior to receiving a response to the original " + "request.");
       detailMessage.setRequestId(advice.getRequestId());
       errorDetail.setDetailMessage(detailMessage);
       return errorDetail;
@@ -498,15 +512,16 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail originalRequestFailed(BasicAdvice advice) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) advice)));
+      setErrorDetailIds(advice, errorDetail);
       errorDetail.setErrorType(ErrorType.GENERAL_ERROR);
       errorDetail.setErrorMessage("Request failed");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The original request which this advice pertains to failed. "
-                  + "This is okay for reversals but if this is in response to "
-                  + "a confirmation it signifies a potential bug in the "
-                  + "client since a confirmation was submitted without "
-                  + "receiving a successful response to the original request.");
+      detailMessage.setFreeString("The original request which this advice pertains to failed. "
+            + "This is okay for reversals but if this is in response to "
+            + "a confirmation it signifies a potential bug in the "
+            + "client since a confirmation was submitted without "
+            + "receiving a successful response to the original request.");
       detailMessage.setRequestId(advice.getRequestId());
       errorDetail.setDetailMessage(detailMessage);
       return errorDetail;
@@ -516,11 +531,12 @@ public class GiftcardModelUtils {
          ActivationReversal reversal,
          ActivationConfirmationRecord confirmationRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) reversal)));
+      setErrorDetailIds(reversal, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_ACTIVATED);
       errorDetail.setErrorMessage("Request confirmed");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The original ActivationRequest which this ActivationReversal pertains to has already been confirmed.");
+      detailMessage.setFreeString("The original ActivationRequest which this ActivationReversal pertains to has already been confirmed.");
       detailMessage.setRequestId(reversal.getRequestId());
       detailMessage.setReversalId(reversal.getId());
       detailMessage.setReversalTime(reversal.getTime().toString());
@@ -534,11 +550,12 @@ public class GiftcardModelUtils {
          ActivationConfirmation confirmation,
          ActivationReversalRecord reversalRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) confirmation)));
+      setErrorDetailIds(confirmation, errorDetail);
       errorDetail.setErrorType(ErrorType.GENERAL_ERROR);
       errorDetail.setErrorMessage("Request reversed");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The original ActivationRequest which this ActivationConfirmation pertains to has already been reversed.");
+      detailMessage.setFreeString("The original ActivationRequest which this ActivationConfirmation pertains to has already been reversed.");
       detailMessage.setRequestId(confirmation.getRequestId());
       detailMessage.setReversalId(confirmation.getId());
       detailMessage.setReversalTime(confirmation.getTime().toString());
@@ -548,15 +565,14 @@ public class GiftcardModelUtils {
       return errorDetail;
    }
 
-   public static ErrorDetail originalRequestConfirmed(
-         LoadReversal reversal,
-         LoadConfirmationRecord confirmationRecord) {
+   public static ErrorDetail originalRequestConfirmed(LoadReversal reversal, LoadConfirmationRecord confirmationRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) reversal)));
+      setErrorDetailIds(reversal, errorDetail);
       errorDetail.setErrorType(ErrorType.TRANSACTION_NOT_SUPPORTED);
       errorDetail.setErrorMessage("Request confirmed");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage
-            .setFreeString("The original LoadRequest which this LoadReversal pertains to has already been confirmed.");
+      detailMessage.setFreeString("The original LoadRequest which this LoadReversal pertains to has already been confirmed.");
       detailMessage.setRequestId(reversal.getRequestId());
       detailMessage.setReversalId(reversal.getId());
       detailMessage.setReversalTime(reversal.getTime().toString());
@@ -568,11 +584,12 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail originalRequestReversed(LoadConfirmation confirmation, LoadReversalRecord reversalRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) confirmation)));
+      setErrorDetailIds(confirmation, errorDetail);
       errorDetail.setErrorType(ErrorType.GENERAL_ERROR);
       errorDetail.setErrorMessage("Request reversed");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The original LoadRequest which this LoadConfirmation pertains to has already been reversed.");
+      detailMessage.setFreeString("The original LoadRequest which this LoadConfirmation pertains to has already been reversed.");
       detailMessage.setRequestId(confirmation.getRequestId());
       detailMessage.setReversalId(confirmation.getId());
       detailMessage.setReversalTime(confirmation.getTime().toString());
@@ -586,11 +603,12 @@ public class GiftcardModelUtils {
          RedemptionReversal reversal,
          RedemptionConfirmationRecord confirmationRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) reversal)));
+      setErrorDetailIds(reversal, errorDetail);
       errorDetail.setErrorType(ErrorType.TRANSACTION_NOT_SUPPORTED);
       errorDetail.setErrorMessage("Request confirmed");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The original RedemptionRequest which this RedemptionReversal pertains to has already been confirmed.");
+      detailMessage.setFreeString("The original RedemptionRequest which this RedemptionReversal pertains to has already been confirmed.");
       detailMessage.setRequestId(reversal.getRequestId());
       detailMessage.setReversalId(reversal.getId());
       detailMessage.setReversalTime(reversal.getTime().toString());
@@ -604,11 +622,12 @@ public class GiftcardModelUtils {
          RedemptionConfirmation confirmation,
          RedemptionReversalRecord reversalRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) confirmation)));
+      setErrorDetailIds(confirmation, errorDetail);
       errorDetail.setErrorType(ErrorType.GENERAL_ERROR);
       errorDetail.setErrorMessage("Request reversed");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The original RedemptionRequest which this RedemptionConfirmation pertains to has already been reversed.");
+      detailMessage.setFreeString("The original RedemptionRequest which this RedemptionConfirmation pertains to has already been reversed.");
       detailMessage.setRequestId(confirmation.getRequestId());
       detailMessage.setReversalId(confirmation.getId());
       detailMessage.setReversalTime(confirmation.getTime().toString());
@@ -618,15 +637,14 @@ public class GiftcardModelUtils {
       return errorDetail;
    }
 
-   public static ErrorDetail originalRequestConfirmed(
-         VoidReversal reversal,
-         VoidConfirmationRecord confirmationRecord) {
+   public static ErrorDetail originalRequestConfirmed(VoidReversal reversal, VoidConfirmationRecord confirmationRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) reversal)));
+      setErrorDetailIds(reversal, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_VOIDED);
       errorDetail.setErrorMessage("Request confirmed");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage
-            .setFreeString("The original VoidRequest which this VoidReversal pertains to has already been confirmed.");
+      detailMessage.setFreeString("The original VoidRequest which this VoidReversal pertains to has already been confirmed.");
       detailMessage.setRequestId(reversal.getRequestId());
       detailMessage.setReversalId(reversal.getId());
       detailMessage.setReversalTime(reversal.getTime().toString());
@@ -638,11 +656,12 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail originalRequestReversed(VoidConfirmation confirmation, VoidReversalRecord reversalRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) confirmation)));
+      setErrorDetailIds(confirmation, errorDetail);
       errorDetail.setErrorType(ErrorType.GENERAL_ERROR);
       errorDetail.setErrorMessage("Request reversed");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The original VoidRequest which this VoidConfirmation pertains to has already been reversed.");
+      detailMessage.setFreeString("The original VoidRequest which this VoidConfirmation pertains to has already been reversed.");
       detailMessage.setRequestId(confirmation.getRequestId());
       detailMessage.setReversalId(confirmation.getId());
       detailMessage.setReversalTime(confirmation.getTime().toString());
@@ -653,10 +672,13 @@ public class GiftcardModelUtils {
    }
 
    public static ErrorDetail cardIsNotYetActive(
+         Object req,
          CardRecord cardRecord,
          ActivationRecord activationRecord,
          ActivationReversalRecord activationReversalRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_NOT_ACTIVATED);
       errorDetail.setErrorMessage("Not active");
       DetailMessage detailMessage = new DetailMessage();
@@ -674,8 +696,10 @@ public class GiftcardModelUtils {
       return errorDetail;
    }
 
-   public static ErrorDetail cardIsActive(CardRecord cardRecord, ActivationRecord activationRecord) {
+   public static ErrorDetail cardIsActive(Object req, CardRecord cardRecord, ActivationRecord activationRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_ACTIVATED);
       errorDetail.setErrorMessage("Card active");
       DetailMessage detailMessage = new DetailMessage();
@@ -684,14 +708,16 @@ public class GiftcardModelUtils {
       detailMessage.setActivationId(activationRecord.getActivationRequest().getId());
       String lastConfirmationId = activationRecord.getLastConfirmationId();
       if (lastConfirmationId != null) {
-         detailMessage.setConfirmationId(UUID.fromString(lastConfirmationId));
+         detailMessage.setConfirmationId(lastConfirmationId);
       }
       errorDetail.setDetailMessage(detailMessage);
       return errorDetail;
    }
 
-   public static ErrorDetail cardIsVoided(CardRecord cardRecord, VoidRecord voidRecord) {
+   public static ErrorDetail cardIsVoided(Object req, CardRecord cardRecord, VoidRecord voidRecord) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_VOIDED);
       errorDetail.setErrorMessage("Card voided");
       DetailMessage detailMessage = new DetailMessage();
@@ -700,7 +726,7 @@ public class GiftcardModelUtils {
       detailMessage.setVoidId(voidRecord.getVoidRequest().getId());
       String lastConfirmationId = voidRecord.getLastConfirmationId();
       if (lastConfirmationId != null) {
-         detailMessage.setConfirmationId(UUID.fromString(lastConfirmationId));
+         detailMessage.setConfirmationId(lastConfirmationId);
       }
       errorDetail.setDetailMessage(detailMessage);
       return errorDetail;
@@ -708,6 +734,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardNotFound(ActivationRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.INVALID_CARD_NUMBER);
       errorDetail.setErrorMessage("Unknown card");
       DetailMessage detailMessage = new DetailMessage();
@@ -720,6 +748,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardNotFound(LoadRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.INVALID_CARD_NUMBER);
       errorDetail.setErrorMessage("Unknown card");
       DetailMessage detailMessage = new DetailMessage();
@@ -732,6 +762,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardNotFound(LookupRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.INVALID_CARD_NUMBER);
       errorDetail.setErrorMessage("Unknown card");
       DetailMessage detailMessage = new DetailMessage();
@@ -744,6 +776,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardNotFound(RedemptionRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.INVALID_CARD_NUMBER);
       errorDetail.setErrorMessage("Unknown card");
       DetailMessage detailMessage = new DetailMessage();
@@ -756,6 +790,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardNotFound(VoidRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.INVALID_CARD_NUMBER);
       errorDetail.setErrorMessage("Unknown card");
       DetailMessage detailMessage = new DetailMessage();
@@ -768,6 +804,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardExpired(ActivationRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_EXPIRED);
       errorDetail.setErrorMessage("Card expired");
       DetailMessage detailMessage = new DetailMessage();
@@ -780,6 +818,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardExpired(LoadRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_EXPIRED);
       errorDetail.setErrorMessage("Card expired");
       DetailMessage detailMessage = new DetailMessage();
@@ -792,6 +832,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardExpired(RedemptionRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_EXPIRED);
       errorDetail.setErrorMessage("Card expired");
       DetailMessage detailMessage = new DetailMessage();
@@ -804,6 +846,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardExpired(VoidRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_EXPIRED);
       errorDetail.setErrorMessage("Card expired");
       DetailMessage detailMessage = new DetailMessage();
@@ -816,12 +860,13 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardExpiryInvalid(CardRecord cardRecord, ActivationRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_EXPIRED);
       errorDetail.setErrorMessage("Card expired");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The card expiry date provided does not match the expiry date on record. The expiry date on record is "
-                  + cardRecord.getCard().getExpiryDate());
+      detailMessage.setFreeString("The card expiry date provided does not match the expiry date on record. The expiry date on record is "
+            + cardRecord.getCard().getExpiryDate());
       detailMessage.setRequestId(req.getId());
       detailMessage.setCard(req.getCard());
       errorDetail.setDetailMessage(detailMessage);
@@ -830,12 +875,13 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardExpiryInvalid(CardRecord cardRecord, LoadRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_EXPIRED);
       errorDetail.setErrorMessage("Card expired");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The card expiry date provided does not match the expiry date on record. The expiry date on record is "
-                  + cardRecord.getCard().getExpiryDate());
+      detailMessage.setFreeString("The card expiry date provided does not match the expiry date on record. The expiry date on record is "
+            + cardRecord.getCard().getExpiryDate());
       detailMessage.setRequestId(req.getId());
       detailMessage.setCard(req.getCard());
       errorDetail.setDetailMessage(detailMessage);
@@ -844,12 +890,13 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardExpiryInvalid(CardRecord cardRecord, RedemptionRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.CARD_EXPIRED);
       errorDetail.setErrorMessage("Card expired");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The card expiry date provided does not match the expiry date on record. The expiry date on record is "
-                  + cardRecord.getCard().getExpiryDate());
+      detailMessage.setFreeString("The card expiry date provided does not match the expiry date on record. The expiry date on record is "
+            + cardRecord.getCard().getExpiryDate());
       detailMessage.setRequestId(req.getId());
       detailMessage.setCard(req.getCard());
       errorDetail.setDetailMessage(detailMessage);
@@ -858,12 +905,13 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail cardExpiryInvalid(CardRecord cardRecord, VoidRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.GENERAL_ERROR);
       errorDetail.setErrorMessage("Wrong expiry date");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            "The card expiry date provided does not match the expiry date on record. The expiry date on record is "
-                  + cardRecord.getCard().getExpiryDate());
+      detailMessage.setFreeString("The card expiry date provided does not match the expiry date on record. The expiry date on record is "
+            + cardRecord.getCard().getExpiryDate());
       detailMessage.setRequestId(req.getId());
       detailMessage.setCard(req.getCard());
       errorDetail.setDetailMessage(detailMessage);
@@ -872,6 +920,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail productNotFound(ActivationRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.INVALID_PRODUCT);
       errorDetail.setErrorMessage("Unknown product");
       DetailMessage detailMessage = new DetailMessage();
@@ -884,6 +934,8 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail insufficientFunds(CardRecord cardRecord, RedemptionRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.INSUFFICIENT_FUNDS);
       errorDetail.setErrorMessage("Insufficient funds");
       DetailMessage detailMessage = new DetailMessage();
@@ -894,8 +946,8 @@ public class GiftcardModelUtils {
       GiftcardAmounts dmAmounts = new GiftcardAmounts();
       String currency = reqAmounts.getRequestAmount().getCurrency();
       dmAmounts.setApprovedAmount(new LedgerAmount().amount(0l).currency(currency));
-      dmAmounts
-            .setRequestAmount(new LedgerAmount().amount(reqAmounts.getRequestAmount().getAmount()).currency(currency));
+      dmAmounts.setRequestAmount(new LedgerAmount().amount(reqAmounts.getRequestAmount().getAmount())
+            .currency(currency));
       dmAmounts.setBalanceAmount(new LedgerAmount().amount(cardRecord.getBalance().getAmount()).currency(currency));
       detailMessage.setAmounts(dmAmounts);
       errorDetail.setDetailMessage(detailMessage);
@@ -904,15 +956,16 @@ public class GiftcardModelUtils {
 
    public static ErrorDetail incorrectPin(CardRecord cardRecord, RedemptionRequest req) {
       ErrorDetail errorDetail = new ErrorDetail();
+      errorDetail.setRequestType(getTransactionRequestType(((Object) req)));
+      setErrorDetailIds(req, errorDetail);
       errorDetail.setErrorType(ErrorType.INCORRECT_PIN);
       errorDetail.setErrorMessage("Incorrect PIN");
       DetailMessage detailMessage = new DetailMessage();
-      detailMessage.setFreeString(
-            String.format(
-                  "The PIN attempt was incorrect. " + "You submitted %s (clear) or %s (encrypted). "
-                        + "The expected details are shown in the card field.",
-                  req.getCard().getClearPin(),
-                  req.getCard().getEncryptedPin()));
+      detailMessage.setFreeString(String.format(
+            "The PIN attempt was incorrect. " + "You submitted %s (clear) or %s (encrypted). "
+                  + "The expected details are shown in the card field.",
+            req.getCard().getClearPin(),
+            req.getCard().getEncryptedPin()));
       detailMessage.setRequestId(req.getId());
       detailMessage.setCard(cardRecord.getCard());
       errorDetail.setDetailMessage(detailMessage);
@@ -1279,9 +1332,9 @@ public class GiftcardModelUtils {
       int i = 0;
       for (ConstraintViolation violation : violations) {
          System.out.println(i);
-         formatErrors.add(
-               new FormatError().msg(violation.getMessage()).field(violation.getPropertyPath().toString()).value(
-                     violation.getInvalidValue() == null ? "null" : violation.getInvalidValue().toString()));
+         formatErrors.add(new FormatError().msg(violation.getMessage())
+               .field(violation.getPropertyPath().toString())
+               .value(violation.getInvalidValue() == null ? "null" : violation.getInvalidValue().toString()));
          i++;
       }
       ErrorDetail errorDetail =
@@ -1291,11 +1344,11 @@ public class GiftcardModelUtils {
       return Response.status(400).entity(errorDetail).build();
    }
 
-   public static Response isUuidConsistent(UUID uuid, ActivationRequest activationReq) {
+   public static Response isUuidConsistent(String uuid, ActivationRequest activationReq) {
       Response rsp = null;
-      String pathId = uuid.toString();
-      UUID objectId = activationReq.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
+      String pathId = uuid;
+      String objectId = activationReq.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
       if (errorDetail != null) {
          DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
          detailMessage.setRequestId(objectId);
@@ -1304,10 +1357,10 @@ public class GiftcardModelUtils {
       return rsp;
    }
 
-   public static Response isUuidConsistent(UUID requestUuid, UUID reversalUuid, ActivationReversal activationRev) {
-      String pathId = reversalUuid.toString();
-      UUID objectId = activationRev.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
+   public static Response isUuidConsistent(String requestUuid, String reversalUuid, ActivationReversal activationRev) {
+      String pathId = reversalUuid;
+      String objectId = activationRev.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
       if (errorDetail != null) {
          DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
          detailMessage.setReversalId(objectId);
@@ -1317,12 +1370,12 @@ public class GiftcardModelUtils {
    }
 
    public static Response isUuidConsistent(
-         UUID requestUuid,
-         UUID confirmationUuid,
+         String requestUuid,
+         String confirmationUuid,
          ActivationConfirmation activationConfirmation) {
-      String pathId = confirmationUuid.toString();
-      UUID objectId = activationConfirmation.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
+      String pathId = confirmationUuid;
+      String objectId = activationConfirmation.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
       if (errorDetail != null) {
          DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
          detailMessage.setConfirmationId(objectId);
@@ -1331,11 +1384,11 @@ public class GiftcardModelUtils {
       return null;
    }
 
-   public static Response isUuidConsistent(UUID uuid, LoadRequest loadReq) {
+   public static Response isUuidConsistent(String uuid, LoadRequest loadReq) {
       Response rsp = null;
-      String pathId = uuid.toString();
-      UUID objectId = loadReq.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
+      String pathId = uuid;
+      String objectId = loadReq.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
       if (errorDetail != null) {
          DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
          detailMessage.setRequestId(objectId);
@@ -1344,60 +1397,10 @@ public class GiftcardModelUtils {
       return rsp;
    }
 
-   public static Response isUuidConsistent(UUID requestUuid, UUID reversalUuid, LoadReversal loadRev) {
-      String pathId = reversalUuid.toString();
-      UUID objectId = loadRev.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
-      if (errorDetail != null) {
-         DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
-         detailMessage.setReversalId(objectId);
-         return Response.status(400).entity(errorDetail).build();
-      }
-      return null;
-   }
-
-   public static Response isUuidConsistent(UUID requestUuid, UUID confirmationUuid, LoadConfirmation loadConfirmation) {
-      String pathId = confirmationUuid.toString();
-      UUID objectId = loadConfirmation.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
-      if (errorDetail != null) {
-         DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
-         detailMessage.setConfirmationId(objectId);
-         return Response.status(400).entity(errorDetail).build();
-      }
-      return null;
-   }
-
-   public static Response isUuidConsistent(UUID uuid, LookupRequest lookupReq) {
-      Response rsp = null;
-      String pathId = uuid.toString();
-      UUID objectId = lookupReq.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
-      if (errorDetail != null) {
-         DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
-         detailMessage.setRequestId(objectId);
-         rsp = Response.status(400).entity(errorDetail).build();
-      }
-      return rsp;
-   }
-
-   public static Response isUuidConsistent(UUID uuid, RedemptionRequest redemptionReq) {
-      Response rsp = null;
-      String pathId = uuid.toString();
-      UUID objectId = redemptionReq.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
-      if (errorDetail != null) {
-         DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
-         detailMessage.setRequestId(objectId);
-         rsp = Response.status(400).entity(errorDetail).build();
-      }
-      return rsp;
-   }
-
-   public static Response isUuidConsistent(UUID requestUuid, UUID reversalUuid, RedemptionReversal redemptionRev) {
-      String pathId = reversalUuid.toString();
-      UUID objectId = redemptionRev.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
+   public static Response isUuidConsistent(String requestUuid, String reversalUuid, LoadReversal loadRev) {
+      String pathId = reversalUuid;
+      String objectId = loadRev.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
       if (errorDetail != null) {
          DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
          detailMessage.setReversalId(objectId);
@@ -1407,12 +1410,12 @@ public class GiftcardModelUtils {
    }
 
    public static Response isUuidConsistent(
-         UUID requestUuid,
-         UUID confirmationUuid,
-         RedemptionConfirmation redemptionConfirmation) {
-      String pathId = confirmationUuid.toString();
-      UUID objectId = redemptionConfirmation.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
+         String requestUuid,
+         String confirmationUuid,
+         LoadConfirmation loadConfirmation) {
+      String pathId = confirmationUuid;
+      String objectId = loadConfirmation.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
       if (errorDetail != null) {
          DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
          detailMessage.setConfirmationId(objectId);
@@ -1421,11 +1424,11 @@ public class GiftcardModelUtils {
       return null;
    }
 
-   public static Response isUuidConsistent(UUID uuid, VoidRequest voidReq) {
+   public static Response isUuidConsistent(String uuid, LookupRequest lookupReq) {
       Response rsp = null;
-      String pathId = uuid.toString();
-      UUID objectId = voidReq.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
+      String pathId = uuid;
+      String objectId = lookupReq.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
       if (errorDetail != null) {
          DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
          detailMessage.setRequestId(objectId);
@@ -1434,10 +1437,23 @@ public class GiftcardModelUtils {
       return rsp;
    }
 
-   public static Response isUuidConsistent(UUID requestUuid, UUID reversalUuid, VoidReversal voidRev) {
-      String pathId = reversalUuid.toString();
-      UUID objectId = voidRev.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
+   public static Response isUuidConsistent(String uuid, RedemptionRequest redemptionReq) {
+      Response rsp = null;
+      String pathId = uuid;
+      String objectId = redemptionReq.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
+      if (errorDetail != null) {
+         DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
+         detailMessage.setRequestId(objectId);
+         rsp = Response.status(400).entity(errorDetail).build();
+      }
+      return rsp;
+   }
+
+   public static Response isUuidConsistent(String requestUuid, String reversalUuid, RedemptionReversal redemptionRev) {
+      String pathId = reversalUuid;
+      String objectId = redemptionRev.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
       if (errorDetail != null) {
          DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
          detailMessage.setReversalId(objectId);
@@ -1446,10 +1462,53 @@ public class GiftcardModelUtils {
       return null;
    }
 
-   public static Response isUuidConsistent(UUID requestUuid, UUID confirmationUuid, VoidConfirmation voidConfirmation) {
-      String pathId = confirmationUuid.toString();
-      UUID objectId = voidConfirmation.getId();
-      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId.toString());
+   public static Response isUuidConsistent(
+         String requestUuid,
+         String confirmationUuid,
+         RedemptionConfirmation redemptionConfirmation) {
+      String pathId = confirmationUuid;
+      String objectId = redemptionConfirmation.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
+      if (errorDetail != null) {
+         DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
+         detailMessage.setConfirmationId(objectId);
+         return Response.status(400).entity(errorDetail).build();
+      }
+      return null;
+   }
+
+   public static Response isUuidConsistent(String uuid, VoidRequest voidReq) {
+      Response rsp = null;
+      String pathId = uuid;
+      String objectId = voidReq.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
+      if (errorDetail != null) {
+         DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
+         detailMessage.setRequestId(objectId);
+         rsp = Response.status(400).entity(errorDetail).build();
+      }
+      return rsp;
+   }
+
+   public static Response isUuidConsistent(String requestUuid, String reversalUuid, VoidReversal voidRev) {
+      String pathId = reversalUuid;
+      String objectId = voidRev.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
+      if (errorDetail != null) {
+         DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
+         detailMessage.setReversalId(objectId);
+         return Response.status(400).entity(errorDetail).build();
+      }
+      return null;
+   }
+
+   public static Response isUuidConsistent(
+         String requestUuid,
+         String confirmationUuid,
+         VoidConfirmation voidConfirmation) {
+      String pathId = confirmationUuid;
+      String objectId = voidConfirmation.getId();
+      ErrorDetail errorDetail = isUuidConsistent(pathId, objectId);
       if (errorDetail != null) {
          DetailMessage detailMessage = (DetailMessage) errorDetail.getDetailMessage();
          detailMessage.setConfirmationId(objectId);
@@ -1493,5 +1552,54 @@ public class GiftcardModelUtils {
          password = authString.substring(authString.indexOf(':') + 1);
       }
       return password;
+   }
+
+   public static void setErrorDetailIds(Object req, ErrorDetail errorDetail) {
+      if (req instanceof BasicAdvice) {
+         errorDetail.setId(((BasicAdvice) req).getId());
+         errorDetail.setOriginalId(((BasicAdvice) req).getRequestId());
+      } else {
+         errorDetail.setId(((Transaction) req).getId());
+      }
+   }
+
+   public static ErrorDetail.RequestType getTransactionRequestType(Object obj) {
+      if (obj instanceof Transaction) {
+         return getTransactionRequestType((Transaction) obj);
+      } else {
+         return getTransactionRequestType((BasicAdvice) obj);
+      }
+   }
+
+   public static ErrorDetail.RequestType getTransactionRequestType(Transaction transaction) {
+      if (transaction instanceof ActivationRequest)
+         return ErrorDetail.RequestType.ACTIVATION_REQUEST;
+      else if (transaction instanceof LoadRequest)
+         return ErrorDetail.RequestType.LOAD_REQUEST;
+      else if (transaction instanceof LookupRequest)
+         return ErrorDetail.RequestType.LOOKUP_REQUEST;
+      else if (transaction instanceof RedemptionRequest)
+         return ErrorDetail.RequestType.REDEMPTION_REQUEST;
+      else
+         return ErrorDetail.RequestType.VOID_REQUEST;
+   }
+
+   public static ErrorDetail.RequestType getTransactionRequestType(BasicAdvice transaction) {
+      if (transaction instanceof ActivationConfirmation)
+         return ErrorDetail.RequestType.ACTIVATION_CONFIRMATION;
+      else if (transaction instanceof ActivationReversal)
+         return ErrorDetail.RequestType.ACTIVATION_REVERSAL;
+      else if (transaction instanceof LoadConfirmation)
+         return ErrorDetail.RequestType.LOAD_CONFIRMATION;
+      else if (transaction instanceof LoadReversal)
+         return ErrorDetail.RequestType.LOAD_REVERSAL;
+      else if (transaction instanceof RedemptionConfirmation)
+         return ErrorDetail.RequestType.REDEMPTION_CONFIRMATION;
+      else if (transaction instanceof RedemptionReversal)
+         return ErrorDetail.RequestType.REDEMPTION_REVERSAL;
+      else if (transaction instanceof VoidConfirmation)
+         return ErrorDetail.RequestType.VOID_CONFIRMATION;
+      else
+         return ErrorDetail.RequestType.VOID_REVERSAL;
    }
 }

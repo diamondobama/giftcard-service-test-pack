@@ -1,13 +1,5 @@
 package io.electrum.giftcard.handler;
 
-import java.util.UUID;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.electrum.giftcard.api.model.ActivationConfirmation;
 import io.electrum.giftcard.server.api.GiftcardTestServer;
 import io.electrum.giftcard.server.backend.db.MockGiftcardDb;
@@ -19,13 +11,20 @@ import io.electrum.giftcard.server.backend.records.CardRecord.Status;
 import io.electrum.giftcard.server.backend.records.RequestRecord.State;
 import io.electrum.giftcard.server.backend.tables.ActivationConfirmationsTable;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
+import io.electrum.vas.model.BasicAdviceResponse;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfirmActivationHandler {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());
 
    public Response handle(
-         UUID requestId,
-         UUID confirmationId,
+         String requestId,
+         String confirmationId,
          ActivationConfirmation confirmation,
          HttpHeaders httpHeaders) {
       try {
@@ -44,27 +43,28 @@ public class ConfirmActivationHandler {
          String password = GiftcardModelUtils.getPasswordFromAuth(authString);
          MockGiftcardDb giftcardDb = GiftcardTestServer.getBackend().getDbForUser(username, password);
          // record request
-         if (giftcardDb.doesUuidExist(confirmationId.toString())) {
-            return Response.status(400).entity(GiftcardModelUtils.duplicateRequest(confirmationId.toString())).build();
+         if (giftcardDb.doesUuidExist(confirmationId)) {
+            return Response.status(400)
+                  .entity(GiftcardModelUtils.duplicateRequest(confirmation, confirmationId))
+                  .build();
          }
          ActivationConfirmationsTable activationConfirmationsTable = giftcardDb.getActivationConfirmationsTable();
-         ActivationConfirmationRecord activationConfirmationRecord =
-               new ActivationConfirmationRecord(confirmationId.toString());
-         activationConfirmationRecord.setRequestId(requestId.toString());
+         ActivationConfirmationRecord activationConfirmationRecord = new ActivationConfirmationRecord(confirmationId);
+         activationConfirmationRecord.setRequestId(requestId);
          activationConfirmationRecord.setActivationConfirmation(confirmation);
          activationConfirmationsTable.putRecord(activationConfirmationRecord);
-         ActivationRecord activationRecord = giftcardDb.getActivationsTable().getRecord(requestId.toString());
+         ActivationRecord activationRecord = giftcardDb.getActivationsTable().getRecord(requestId);
          if (activationRecord != null) {
-            activationRecord.addConfirmationId(confirmation.getId().toString());
+            activationRecord.addConfirmationId(confirmation.getId());
          }
          // process request
          rsp = canConfirmActivation(confirmation, giftcardDb);
          if (rsp != null) {
             return rsp;
          }
-         confirmActivation(confirmation, giftcardDb);
+         BasicAdviceResponse advice = confirmActivation(confirmation, giftcardDb);
          // respond
-         return Response.accepted().build();
+         return Response.accepted().entity(advice).build();
       } catch (Exception e) {
          log.debug("error processing ActivationConfirmation", e);
          Response rsp = Response.serverError().entity(e.getMessage()).build();
@@ -72,17 +72,20 @@ public class ConfirmActivationHandler {
       }
    }
 
-   private void confirmActivation(ActivationConfirmation confirmation, MockGiftcardDb giftcardDb) {
-      ActivationRecord activationRecord =
-            giftcardDb.getActivationsTable().getRecord(confirmation.getRequestId().toString());
+   private BasicAdviceResponse confirmActivation(ActivationConfirmation confirmation, MockGiftcardDb giftcardDb) {
+      ActivationRecord activationRecord = giftcardDb.getActivationsTable().getRecord(confirmation.getRequestId());
       activationRecord.setState(State.CONFIRMED);
       CardRecord cardRecord = giftcardDb.getCardRecord(activationRecord.getActivationRequest().getCard());
       cardRecord.setStatus(Status.ACTIVATED_CONFIRMED);
+
+      return new BasicAdviceResponse().id(confirmation.getId())
+            .requestId(confirmation.getRequestId())
+            .time(confirmation.getTime())
+            .transactionIdentifiers(confirmation.getThirdPartyIdentifiers());
    }
 
    private Response canConfirmActivation(ActivationConfirmation confirmation, MockGiftcardDb giftcardDb) {
-      ActivationRecord activationRecord =
-            giftcardDb.getActivationsTable().getRecord(confirmation.getRequestId().toString());
+      ActivationRecord activationRecord = giftcardDb.getActivationsTable().getRecord(confirmation.getRequestId());
       if (activationRecord == null) {
          return Response.status(404).entity(GiftcardModelUtils.unableToLocateRecord(confirmation)).build();
       } else if (!activationRecord.isResponded()) {

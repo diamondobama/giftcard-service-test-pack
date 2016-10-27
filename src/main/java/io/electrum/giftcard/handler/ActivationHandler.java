@@ -1,14 +1,5 @@
 package io.electrum.giftcard.handler;
 
-import java.util.UUID;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.electrum.giftcard.api.model.ActivationRequest;
 import io.electrum.giftcard.api.model.ActivationResponse;
 import io.electrum.giftcard.api.model.ErrorDetail;
@@ -23,10 +14,17 @@ import io.electrum.giftcard.server.backend.tables.ActivationsTable;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
 import io.electrum.vas.model.Amounts;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ActivationHandler {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());
 
-   public Response handle(UUID requestId, ActivationRequest request, HttpHeaders httpHeaders, UriInfo uriInfo) {
+   public Response handle(String requestId, ActivationRequest request, HttpHeaders httpHeaders, UriInfo uriInfo) {
       ActivationRecord activationRecord = null;
       try {
          // check its a valid request
@@ -44,12 +42,12 @@ public class ActivationHandler {
          String password = GiftcardModelUtils.getPasswordFromAuth(authString);
          MockGiftcardDb giftcardDb = GiftcardTestServer.getBackend().getDbForUser(username, password);
          // check for duplicates
-         if (giftcardDb.doesUuidExist(requestId.toString())) {
-            return Response.status(400).entity(GiftcardModelUtils.duplicateRequest(requestId.toString())).build();
+         if (giftcardDb.doesUuidExist(requestId)) {
+            return Response.status(400).entity(GiftcardModelUtils.duplicateRequest(request, requestId)).build();
          }
          // record request
          ActivationsTable activationsTable = giftcardDb.getActivationsTable();
-         activationRecord = new ActivationRecord(requestId.toString());
+         activationRecord = new ActivationRecord(requestId);
          activationRecord.setActivationRequest(request);
          activationsTable.putRecord(activationRecord);
          // check card can be activated
@@ -73,7 +71,7 @@ public class ActivationHandler {
          for (StackTraceElement ste : e.getStackTrace()) {
             log.debug(ste.toString());
          }
-         Response rsp = Response.serverError().entity(GiftcardModelUtils.exceptionResponse()).build();
+         Response rsp = Response.serverError().entity(GiftcardModelUtils.exceptionResponse(request)).build();
          return rsp;
       } finally {
          if (activationRecord != null) {
@@ -97,11 +95,13 @@ public class ActivationHandler {
       case ACTIVATED:
       case ACTIVATED_CONFIRMED:
          ActivationRecord activationRecord = giftcardDb.getActivationsTable().getRecord(cardRecord.getActivationId());
-         return Response.status(400).entity(GiftcardModelUtils.cardIsActive(cardRecord, activationRecord)).build();
+         return Response.status(400)
+               .entity(GiftcardModelUtils.cardIsActive(request, cardRecord, activationRecord))
+               .build();
       case VOIDED:
       case VOIDED_CONFIRMED:
          VoidRecord voidRecord = giftcardDb.getVoidsTable().getRecord(cardRecord.getVoidId());
-         return Response.status(400).entity(GiftcardModelUtils.cardIsVoided(cardRecord, voidRecord)).build();
+         return Response.status(400).entity(GiftcardModelUtils.cardIsVoided(request, cardRecord, voidRecord)).build();
       }
       if (!cardRecord.expiryDateCorrect(request.getCard().getExpiryDate())) {
          return Response.status(400).entity(GiftcardModelUtils.cardExpiryInvalid(cardRecord, request)).build();
@@ -130,7 +130,7 @@ public class ActivationHandler {
       cardRecord.getBalance().amount(requestAmount + productRecord.getStartingBalance().getAmount());
       cardRecord.getAvailableBalance().amount(requestAmount + productRecord.getStartingBalance().getAmount());
       cardRecord.setStatus(Status.ACTIVATED);
-      cardRecord.setActivationId(request.getId().toString());
+      cardRecord.setActivationId(request.getId());
       cardRecord.setProductId(productRecord.getRecordId());
       // update with new PIN if submitted
       // clear PIN takes preference

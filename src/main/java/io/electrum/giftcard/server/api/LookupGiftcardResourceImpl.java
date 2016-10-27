@@ -1,6 +1,10 @@
 package io.electrum.giftcard.server.api;
 
-import java.util.UUID;
+import io.electrum.giftcard.api.ILookupGiftcardsResource;
+import io.electrum.giftcard.api.LookupGiftcardsResource;
+import io.electrum.giftcard.api.model.LookupRequest;
+import io.electrum.giftcard.handler.GiftcardMessageHandlerFactory;
+import io.swagger.annotations.Api;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
@@ -11,13 +15,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.electrum.giftcard.api.ILookupGiftcardsResource;
-import io.electrum.giftcard.api.LookupGiftcardsResource;
-import io.electrum.giftcard.api.model.LookupRequest;
-import io.electrum.giftcard.handler.GiftcardMessageHandlerFactory;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @Path("/giftcard/v2/lookupGiftcard")
 @Api(description = "the Giftcard API")
@@ -36,7 +33,7 @@ public class LookupGiftcardResourceImpl extends LookupGiftcardsResource implemen
 
    @Override
    public Response lookupGiftcard(
-         UUID lookupId,
+         String lookupId,
          LookupRequest body,
          SecurityContext securityContext,
          HttpHeaders httpHeaders,
