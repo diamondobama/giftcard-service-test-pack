@@ -1,6 +1,12 @@
 package io.electrum.giftcard.server.api;
 
-import java.util.UUID;
+import io.electrum.giftcard.api.IRedemptionsResource;
+import io.electrum.giftcard.api.RedemptionsResource;
+import io.electrum.giftcard.api.model.RedemptionConfirmation;
+import io.electrum.giftcard.api.model.RedemptionRequest;
+import io.electrum.giftcard.api.model.RedemptionReversal;
+import io.electrum.giftcard.handler.GiftcardMessageHandlerFactory;
+import io.swagger.annotations.Api;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -12,15 +18,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.electrum.giftcard.api.RedemptionsResource;
-import io.electrum.giftcard.api.IRedemptionsResource;
-import io.electrum.giftcard.api.model.RedemptionConfirmation;
-import io.electrum.giftcard.api.model.RedemptionRequest;
-import io.electrum.giftcard.api.model.RedemptionReversal;
-import io.electrum.giftcard.handler.GiftcardMessageHandlerFactory;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @Path("/giftcard/v2/redemptions")
 @Api(description = "the Giftcard API")
@@ -39,8 +36,8 @@ public class RedemptionsResourceImpl extends RedemptionsResource implements IRed
 
    @Override
    public Response confirmRedemption(
-         UUID requestId,
-         UUID confirmationId,
+         String requestId,
+         String confirmationId,
          RedemptionConfirmation confirmation,
          SecurityContext securityContext,
          HttpHeaders httpHeaders,
@@ -49,15 +46,18 @@ public class RedemptionsResourceImpl extends RedemptionsResource implements IRed
       log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
       log.debug(String.format("%s %s\n%s", httpServletRequest.getMethod(), uriInfo.getPath(), confirmation));
       Response rsp =
-            GiftcardMessageHandlerFactory.getConfirmRedemptionHandler()
-                  .handle(requestId, confirmationId, confirmation, httpHeaders);
+            GiftcardMessageHandlerFactory.getConfirmRedemptionHandler().handle(
+                  requestId,
+                  confirmationId,
+                  confirmation,
+                  httpHeaders);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
       return rsp;
    }
 
    @Override
    public Response redeem(
-         UUID requestId,
+         String requestId,
          @Valid RedemptionRequest request,
          SecurityContext securityContext,
          HttpHeaders httpHeaders,
@@ -73,8 +73,8 @@ public class RedemptionsResourceImpl extends RedemptionsResource implements IRed
 
    @Override
    public Response reverseRedemption(
-         UUID requestId,
-         UUID reversalId,
+         String requestId,
+         String reversalId,
          RedemptionReversal reversal,
          SecurityContext securityContext,
          HttpHeaders httpHeaders,
@@ -83,8 +83,11 @@ public class RedemptionsResourceImpl extends RedemptionsResource implements IRed
       log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
       log.debug(String.format("%s %s\n%s", httpServletRequest.getMethod(), uriInfo.getPath(), reversal));
       Response rsp =
-            GiftcardMessageHandlerFactory.getReverseRedemptionHandler()
-                  .handle(requestId, reversalId, reversal, httpHeaders);
+            GiftcardMessageHandlerFactory.getReverseRedemptionHandler().handle(
+                  requestId,
+                  reversalId,
+                  reversal,
+                  httpHeaders);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
       return rsp;
    }

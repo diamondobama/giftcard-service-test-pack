@@ -1,13 +1,5 @@
 package io.electrum.giftcard.handler;
 
-import java.util.UUID;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.electrum.giftcard.api.model.LoadConfirmation;
 import io.electrum.giftcard.server.api.GiftcardTestServer;
 import io.electrum.giftcard.server.backend.db.MockGiftcardDb;
@@ -20,10 +12,20 @@ import io.electrum.giftcard.server.backend.tables.LoadConfirmationsTable;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
 import io.electrum.vas.model.LedgerAmount;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ConfirmLoadHandler {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());
 
-   public Response handle(UUID requestId, UUID confirmationId, LoadConfirmation confirmation, HttpHeaders httpHeaders) {
+   public Response handle(
+         String requestId,
+         String confirmationId,
+         LoadConfirmation confirmation,
+         HttpHeaders httpHeaders) {
       try {
          // check its a valid request
          Response rsp = GiftcardModelUtils.validateLoadConfirmation(confirmation);
@@ -40,17 +42,19 @@ public class ConfirmLoadHandler {
          String password = GiftcardModelUtils.getPasswordFromAuth(authString);
          MockGiftcardDb giftcardDb = GiftcardTestServer.getBackend().getDbForUser(username, password);
          // record request
-         if (giftcardDb.doesUuidExist(confirmationId.toString())) {
-            return Response.status(400).entity(GiftcardModelUtils.duplicateRequest(confirmationId.toString())).build();
+         if (giftcardDb.doesUuidExist(confirmationId)) {
+            return Response.status(400)
+                  .entity(GiftcardModelUtils.duplicateRequest(confirmation, confirmationId))
+                  .build();
          }
          LoadConfirmationsTable loadConfirmationsTable = giftcardDb.getLoadConfirmationsTable();
-         LoadConfirmationRecord loadConfirmationRecord = new LoadConfirmationRecord(confirmationId.toString());
-         loadConfirmationRecord.setRequestId(requestId.toString());
+         LoadConfirmationRecord loadConfirmationRecord = new LoadConfirmationRecord(confirmationId);
+         loadConfirmationRecord.setRequestId(requestId);
          loadConfirmationRecord.setLoadConfirmation(confirmation);
          loadConfirmationsTable.putRecord(loadConfirmationRecord);
-         LoadRecord loadRecord = giftcardDb.getLoadsTable().getRecord(requestId.toString());
+         LoadRecord loadRecord = giftcardDb.getLoadsTable().getRecord(requestId);
          if (loadRecord != null) {
-            loadRecord.addConfirmationId(confirmation.getId().toString());
+            loadRecord.addConfirmationId(confirmation.getId());
          }
          // process request
          rsp = canConfirmLoad(confirmation, giftcardDb);
@@ -59,7 +63,7 @@ public class ConfirmLoadHandler {
          }
          confirmLoad(confirmation, giftcardDb);
          // respond
-         return Response.accepted().build();
+         return Response.accepted().entity(GiftcardModelUtils.loadConfirmResponse(confirmation)).build();
       } catch (Exception e) {
          log.debug("error processing LoadConfirmation", e);
          Response rsp = Response.serverError().entity(e.getMessage()).build();
@@ -68,19 +72,18 @@ public class ConfirmLoadHandler {
    }
 
    private void confirmLoad(LoadConfirmation confirmation, MockGiftcardDb giftcardDb) {
-      LoadRecord loadRecord = giftcardDb.getLoadsTable().getRecord(confirmation.getRequestId().toString());
+      LoadRecord loadRecord = giftcardDb.getLoadsTable().getRecord(confirmation.getRequestId());
       LedgerAmount loadAmount = loadRecord.getLoadResponse().getAmounts().getApprovedAmount();
-      loadRecord.addConfirmationId(confirmation.getId().toString());
+      loadRecord.addConfirmationId(confirmation.getId());
       loadRecord.setState(State.CONFIRMED);
       CardRecord cardRecord = giftcardDb.getCardRecord(loadRecord.getLoadRequest().getCard());
       LedgerAmount availableBalance = cardRecord.getAvailableBalance();
-      //this is the point of a confirmation - the available balance is only updated upon confirmation
-      availableBalance.setAmount(availableBalance.getAmount()+loadAmount.getAmount());
+      // this is the point of a confirmation - the available balance is only updated upon confirmation
+      availableBalance.setAmount(availableBalance.getAmount() + loadAmount.getAmount());
    }
 
    private Response canConfirmLoad(LoadConfirmation confirmation, MockGiftcardDb giftcardDb) {
-      LoadRecord loadRecord =
-            giftcardDb.getLoadsTable().getRecord(confirmation.getRequestId().toString());
+      LoadRecord loadRecord = giftcardDb.getLoadsTable().getRecord(confirmation.getRequestId());
       if (loadRecord == null) {
          return Response.status(404).entity(GiftcardModelUtils.unableToLocateRecord(confirmation)).build();
       } else if (!loadRecord.isResponded()) {

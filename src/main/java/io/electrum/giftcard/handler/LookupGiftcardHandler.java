@@ -1,14 +1,5 @@
 package io.electrum.giftcard.handler;
 
-import java.util.UUID;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.electrum.giftcard.api.model.LookupRequest;
 import io.electrum.giftcard.api.model.LookupResponse;
 import io.electrum.giftcard.server.api.GiftcardTestServer;
@@ -18,10 +9,17 @@ import io.electrum.giftcard.server.backend.records.LookupRecord;
 import io.electrum.giftcard.server.backend.tables.LookupsTable;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class LookupGiftcardHandler {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());
 
-   public Response handle(UUID requestId, LookupRequest request, HttpHeaders httpHeaders, UriInfo uriInfo) {
+   public Response handle(String requestId, LookupRequest request, HttpHeaders httpHeaders, UriInfo uriInfo) {
       LookupRecord lookupRecord = null;
       try {
          // check its a valid request
@@ -39,12 +37,12 @@ public class LookupGiftcardHandler {
          String password = GiftcardModelUtils.getPasswordFromAuth(authString);
          MockGiftcardDb giftcardDb = GiftcardTestServer.getBackend().getDbForUser(username, password);
          // check for duplicates
-         if (giftcardDb.doesUuidExist(requestId.toString())) {
-            return Response.status(400).entity(GiftcardModelUtils.duplicateRequest(requestId.toString())).build();
+         if (giftcardDb.doesUuidExist(requestId)) {
+            return Response.status(400).entity(GiftcardModelUtils.duplicateRequest(request, requestId)).build();
          }
          // record request
          LookupsTable lookupsTable = giftcardDb.getLookupsTable();
-         lookupRecord = new LookupRecord(requestId.toString());
+         lookupRecord = new LookupRecord(requestId);
          lookupRecord.setLookupRequest(request);
          lookupsTable.putRecord(lookupRecord);
          // check card can be activated
@@ -63,7 +61,7 @@ public class LookupGiftcardHandler {
          for (StackTraceElement ste : e.getStackTrace()) {
             log.debug(ste.toString());
          }
-         Response rsp = Response.serverError().entity(GiftcardModelUtils.exceptionResponse()).build();
+         Response rsp = Response.serverError().entity(GiftcardModelUtils.exceptionResponse(request)).build();
          return rsp;
       } finally {
          if (lookupRecord != null) {

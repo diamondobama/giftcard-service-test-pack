@@ -1,21 +1,20 @@
 package io.electrum.giftcard.server.api.model;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.electrum.giftcard.api.model.Card;
 import io.electrum.giftcard.api.model.Product;
-import io.electrum.giftcard.api.model.SlipData;
 import io.electrum.vas.Utils;
 import io.electrum.vas.model.Amounts;
 import io.electrum.vas.model.Institution;
 import io.electrum.vas.model.Originator;
+import io.electrum.vas.model.SlipData;
 import io.electrum.vas.model.ThirdPartyIdentifier;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Detail about an error encountered within the server.
@@ -24,11 +23,11 @@ import io.swagger.annotations.ApiModelProperty;
 public class DetailMessage {
 
    private String pathId = null;
-   private UUID requestId = null;
-   private UUID reversalId = null;
-   private UUID confirmationId = null;
-   private UUID activationId = null;
-   private UUID voidId = null;
+   private String requestId = null;
+   private String reversalId = null;
+   private String confirmationId = null;
+   private String activationId = null;
+   private String voidId = null;
    private Product product = null;
    private String requestTime = null;
    private String reversalTime = null;
@@ -68,18 +67,18 @@ public class DetailMessage {
     * The randomly generated UUID identifying this voucher request, as defined for a variant 4 UUID in [RFC
     * 4122](https://tools.ietf.org/html/rfc4122). This must be the same as the voucherId path parameter.
     **/
-   public DetailMessage requestId(UUID voucherId) {
+   public DetailMessage requestId(String voucherId) {
       this.requestId = voucherId;
       return this;
    }
 
    @ApiModelProperty(value = "The randomly generated UUID identifying this voucher request, as defined for a variant 4 UUID in [RFC 4122](https://tools.ietf.org/html/rfc4122). This must be the same as the voucherId path parameter.")
    @JsonProperty("requestId")
-   public UUID getRequestId() {
+   public String getRequestId() {
       return requestId;
    }
 
-   public void setRequestId(UUID voucherId) {
+   public void setRequestId(String voucherId) {
       this.requestId = voucherId;
    }
 
@@ -87,18 +86,18 @@ public class DetailMessage {
     * The randomly generated UUID identifying this voucher reversal, as defined for a variant 4 UUID in [RFC
     * 4122](https://tools.ietf.org/html/rfc4122). This must be the same as the reversalId path parameter.
     **/
-   public DetailMessage reversalId(UUID reversalId) {
+   public DetailMessage reversalId(String reversalId) {
       this.reversalId = reversalId;
       return this;
    }
 
    @ApiModelProperty(value = "The randomly generated UUID identifying this voucher reversal, as defined for a variant 4 UUID in [RFC 4122](https://tools.ietf.org/html/rfc4122). This must be the same as the reversalId path parameter.")
    @JsonProperty("reversalId")
-   public UUID getReversalId() {
+   public String getReversalId() {
       return reversalId;
    }
 
-   public void setReversalId(UUID reversalId) {
+   public void setReversalId(String reversalId) {
       this.reversalId = reversalId;
    }
 
@@ -106,18 +105,18 @@ public class DetailMessage {
     * The randomly generated UUID identifying this voucher confirmation, as defined for a variant 4 UUID in [RFC
     * 4122](https://tools.ietf.org/html/rfc4122). This must be the same as the confirmationId path parameter.
     **/
-   public DetailMessage confirmationId(UUID confirmationId) {
+   public DetailMessage confirmationId(String confirmationId) {
       this.confirmationId = confirmationId;
       return this;
    }
 
    @ApiModelProperty(value = "The randomly generated UUID identifying this voucher confirmation, as defined for a variant 4 UUID in [RFC 4122](https://tools.ietf.org/html/rfc4122). This must be the same as the confirmationId path parameter.")
    @JsonProperty("confirmationId")
-   public UUID getConfirmationId() {
+   public String getConfirmationId() {
       return confirmationId;
    }
 
-   public void setConfirmationId(UUID confirmationId) {
+   public void setConfirmationId(String confirmationId) {
       this.confirmationId = confirmationId;
    }
 
@@ -125,18 +124,18 @@ public class DetailMessage {
     * The randomly generated UUID identifying this voucher confirmation, as defined for a variant 4 UUID in [RFC
     * 4122](https://tools.ietf.org/html/rfc4122). This must be the same as the confirmationId path parameter.
     **/
-   public DetailMessage activationId(UUID activationId) {
+   public DetailMessage activationId(String activationId) {
       this.activationId = activationId;
       return this;
    }
 
    @ApiModelProperty(value = "The randomly generated UUID identifying an activation, as defined for a variant 4 UUID in [RFC 4122](https://tools.ietf.org/html/rfc4122). This must be the same as the confirmationId path parameter.")
    @JsonProperty("activationId")
-   public UUID getActivationId() {
+   public String getActivationId() {
       return activationId;
    }
 
-   public void setActivationId(UUID activationId) {
+   public void setActivationId(String activationId) {
       this.activationId = activationId;
    }
 
@@ -144,18 +143,18 @@ public class DetailMessage {
     * The randomly generated UUID identifying this voucher confirmation, as defined for a variant 4 UUID in [RFC
     * 4122](https://tools.ietf.org/html/rfc4122). This must be the same as the confirmationId path parameter.
     **/
-   public DetailMessage voidId(UUID voidId) {
+   public DetailMessage voidId(String voidId) {
       this.voidId = voidId;
       return this;
    }
 
    @ApiModelProperty(value = "The randomly generated UUID identifying a void, as defined for a variant 4 UUID in [RFC 4122](https://tools.ietf.org/html/rfc4122). This must be the same as the confirmationId path parameter.")
    @JsonProperty("voidId")
-   public UUID getVoidId() {
+   public String getVoidId() {
       return voidId;
    }
 
-   public void setVoidId(UUID voidId) {
+   public void setVoidId(String voidId) {
       this.voidId = voidId;
    }
 
@@ -167,8 +166,7 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "The product for which the voucher should be provisioned.",
-         access="core-property")
+   @ApiModelProperty(value = "The product for which the voucher should be provisioned.", access = "core-property")
    @JsonProperty("product")
    public Product getProduct() {
       return product;
@@ -219,9 +217,9 @@ public class DetailMessage {
    }
 
    /**
-    * The date and time of the void as recorded by the sender. The format shall be as defined for date-time in [RFC
-    * 3339 section 5.6](https://tools.ietf.org/html/rfc3339#section-5.6). It is recommended that the optional
-    * time-secfrac be included up to millisecond precision.
+    * The date and time of the void as recorded by the sender. The format shall be as defined for date-time in [RFC 3339
+    * section 5.6](https://tools.ietf.org/html/rfc3339#section-5.6). It is recommended that the optional time-secfrac be
+    * included up to millisecond precision.
     **/
    public DetailMessage voidTime(String voidTime) {
       this.voidTime = voidTime;
@@ -266,8 +264,7 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "Information about the merchant who originated this request.",
-         access="core-property")
+   @ApiModelProperty(value = "Information about the merchant who originated this request.", access = "core-property")
    @JsonProperty("originator")
    public Originator getOriginator() {
       return originator;
@@ -285,8 +282,7 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "Information about the sender of this request.",
-         access="core-property")
+   @ApiModelProperty(value = "Information about the sender of this request.", access = "core-property")
    @JsonProperty("client")
    public Institution getClient() {
       return client;
@@ -304,8 +300,7 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "Information about the processor who should process this request.",
-         access="core-property")
+   @ApiModelProperty(value = "Information about the processor who should process this request.", access = "core-property")
    @JsonProperty("settlementEntity")
    public Institution getSettlementEntity() {
       return settlementEntity;
@@ -323,8 +318,7 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "Information about the vendor who should process this request.",
-         access="core-property")
+   @ApiModelProperty(value = "Information about the vendor who should process this request.", access = "core-property")
    @JsonProperty("receiver")
    public Institution getReceiver() {
       return receiver;
@@ -342,8 +336,7 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "The voucher provisioned if the vendor processed the request successfully.",
-         access="core-property")
+   @ApiModelProperty(value = "The voucher provisioned if the vendor processed the request successfully.", access = "core-property")
    @JsonProperty("card")
    public Card getCard() {
       return card;
@@ -369,8 +362,7 @@ public class DetailMessage {
       return this;
    }
 
-   @ApiModelProperty(value = "Data to be printed on the slip in addition to the voucher instructions.",
-         access="core-property")
+   @ApiModelProperty(value = "Data to be printed on the slip in addition to the voucher instructions.", access = "core-property")
    @JsonProperty("slipData")
    public SlipData getSlipData() {
       return slipData;
@@ -399,17 +391,17 @@ public class DetailMessage {
    }
 
    /**
-    * The unaltered thirdPartyIdentifiers array as supplied in the related BasicResponse message. Required if thirdPartyIdentifiers field was
-    * present in the BasicResponse. If no thirdPartyIdentifiers was received in the BasicResponse or no BasicResponse was received
-    * then this should be set to the thirdPartyIdentifiers sent in the original request.
+    * The unaltered thirdPartyIdentifiers array as supplied in the related BasicResponse message. Required if
+    * thirdPartyIdentifiers field was present in the BasicResponse. If no thirdPartyIdentifiers was received in the
+    * BasicResponse or no BasicResponse was received then this should be set to the thirdPartyIdentifiers sent in the
+    * original request.
     **/
    public DetailMessage transactionIdentifiers(List<ThirdPartyIdentifier> transactionIdentifiers) {
       this.thirdPartyIdentifiers = transactionIdentifiers;
       return this;
    }
 
-   @ApiModelProperty(value = "The unaltered thirdPartyIdentifiers array as supplied in the related BasicResponse message. Required if thirdPartyIdentifiers field was present in the BasicResponse. If no thirdPartyIdentifiers was received in the BasicResponse or no BasicResponse was received then this should be set to the thirdPartyIdentifiers sent in the original request.",
-         access="core-property")
+   @ApiModelProperty(value = "The unaltered thirdPartyIdentifiers array as supplied in the related BasicResponse message. Required if thirdPartyIdentifiers field was present in the BasicResponse. If no thirdPartyIdentifiers was received in the BasicResponse or no BasicResponse was received then this should be set to the thirdPartyIdentifiers sent in the original request.", access = "core-property")
    @JsonProperty("thirdPartyIdentifiers")
    public List<ThirdPartyIdentifier> getThirdPartyIdentifiers() {
       return thirdPartyIdentifiers;
@@ -449,12 +441,11 @@ public class DetailMessage {
       return Objects.equals(pathId, detailMessage.pathId) && Objects.equals(requestId, detailMessage.requestId)
             && Objects.equals(reversalId, detailMessage.reversalId)
             && Objects.equals(confirmationId, detailMessage.confirmationId)
-            && Objects.equals(product, detailMessage.product)
-            && Objects.equals(requestTime, detailMessage.requestTime)
+            && Objects.equals(product, detailMessage.product) && Objects.equals(requestTime, detailMessage.requestTime)
             && Objects.equals(reversalTime, detailMessage.reversalTime)
             && Objects.equals(confirmDate, detailMessage.confirmDate)
-            && Objects.equals(originator, detailMessage.originator)
-            && Objects.equals(client, detailMessage.client) && Objects.equals(settlementEntity, detailMessage.settlementEntity)
+            && Objects.equals(originator, detailMessage.originator) && Objects.equals(client, detailMessage.client)
+            && Objects.equals(settlementEntity, detailMessage.settlementEntity)
             && Objects.equals(receiver, detailMessage.receiver) && Objects.equals(card, detailMessage.card)
             && Objects.equals(slipData, detailMessage.slipData) && Objects.equals(freeString, detailMessage.freeString)
             && Objects.equals(formatErrors, detailMessage.formatErrors);
