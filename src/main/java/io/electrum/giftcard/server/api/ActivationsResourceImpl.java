@@ -1,5 +1,14 @@
 package io.electrum.giftcard.server.api;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.ws.rs.Path;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.core.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.electrum.giftcard.api.ActivationsResource;
 import io.electrum.giftcard.api.IActivationsResource;
 import io.electrum.giftcard.api.model.ActivationConfirmation;
@@ -8,18 +17,7 @@ import io.electrum.giftcard.api.model.ActivationReversal;
 import io.electrum.giftcard.handler.GiftcardMessageHandlerFactory;
 import io.swagger.annotations.Api;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-@Path("/giftcard/v2/activations")
+@Path("/giftcard/v3/activations")
 @Api(description = "the Giftcard API")
 public class ActivationsResourceImpl extends ActivationsResource implements IActivationsResource {
 
@@ -40,34 +38,42 @@ public class ActivationsResourceImpl extends ActivationsResource implements IAct
          String confirmationId,
          ActivationConfirmation confirmation,
          SecurityContext securityContext,
+         Request request,
          HttpHeaders httpHeaders,
+         AsyncResponse asyncResponse,
          UriInfo uriInfo,
          HttpServletRequest httpServletRequest) {
       log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
       log.debug(String.format("%s %s\n%s", httpServletRequest.getMethod(), uriInfo.getPath(), confirmation));
       Response rsp =
-            GiftcardMessageHandlerFactory.getConfirmActivationHandler().handle(
-                  requestId,
-                  confirmationId,
-                  confirmation,
-                  httpHeaders);
+            GiftcardMessageHandlerFactory.getConfirmActivationHandler()
+                  .handle(requestId, confirmationId, confirmation, httpHeaders);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
+
+      asyncResponse.resume(rsp);
+
       return rsp;
    }
 
    @Override
    public Response activate(
          String requestId,
-         @Valid ActivationRequest request,
+         @Valid ActivationRequest activationRequest,
          SecurityContext securityContext,
+         Request request,
          HttpHeaders httpHeaders,
+         AsyncResponse asyncResponse,
          UriInfo uriInfo,
          HttpServletRequest httpServletRequest) {
       log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
-      log.debug(String.format("%s %s\n%s", httpServletRequest.getMethod(), uriInfo.getPath(), request));
+      log.debug(String.format("%s %s\n%s", httpServletRequest.getMethod(), uriInfo.getPath(), activationRequest));
       Response rsp =
-            GiftcardMessageHandlerFactory.getActivationHandler().handle(requestId, request, httpHeaders, uriInfo);
+            GiftcardMessageHandlerFactory.getActivationHandler()
+                  .handle(requestId, activationRequest, httpHeaders, uriInfo);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
+
+      asyncResponse.resume(rsp);
+
       return rsp;
    }
 
@@ -77,18 +83,20 @@ public class ActivationsResourceImpl extends ActivationsResource implements IAct
          String reversalId,
          ActivationReversal reversal,
          SecurityContext securityContext,
+         Request request,
          HttpHeaders httpHeaders,
+         AsyncResponse asyncResponse,
          UriInfo uriInfo,
          HttpServletRequest httpServletRequest) {
       log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
       log.debug(String.format("%s %s\n%s", httpServletRequest.getMethod(), uriInfo.getPath(), reversal));
       Response rsp =
-            GiftcardMessageHandlerFactory.getReverseActivationHandler().handle(
-                  requestId,
-                  reversalId,
-                  reversal,
-                  httpHeaders);
+            GiftcardMessageHandlerFactory.getReverseActivationHandler()
+                  .handle(requestId, reversalId, reversal, httpHeaders);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
+
+      asyncResponse.resume(rsp);
+
       return rsp;
    }
 }
