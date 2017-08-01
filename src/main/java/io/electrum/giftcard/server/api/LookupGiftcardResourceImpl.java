@@ -1,22 +1,20 @@
 package io.electrum.giftcard.server.api;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Path;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.core.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.electrum.giftcard.api.ILookupGiftcardsResource;
 import io.electrum.giftcard.api.LookupGiftcardsResource;
 import io.electrum.giftcard.api.model.LookupRequest;
 import io.electrum.giftcard.handler.GiftcardMessageHandlerFactory;
 import io.swagger.annotations.Api;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-@Path("/giftcard/v2/lookupGiftcard")
+@Path("/giftcard/v3/lookupGiftcard")
 @Api(description = "the Giftcard API")
 public class LookupGiftcardResourceImpl extends LookupGiftcardsResource implements ILookupGiftcardsResource {
 
@@ -36,7 +34,9 @@ public class LookupGiftcardResourceImpl extends LookupGiftcardsResource implemen
          String lookupId,
          LookupRequest body,
          SecurityContext securityContext,
+         Request request,
          HttpHeaders httpHeaders,
+         AsyncResponse asyncResponse,
          UriInfo uriInfo,
          HttpServletRequest httpServletRequest) {
       log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
@@ -44,6 +44,9 @@ public class LookupGiftcardResourceImpl extends LookupGiftcardsResource implemen
       Response rsp =
             GiftcardMessageHandlerFactory.getLookupGiftcardHandler().handle(lookupId, body, httpHeaders, uriInfo);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
+
+      asyncResponse.resume(rsp);
+
       return rsp;
    }
 }

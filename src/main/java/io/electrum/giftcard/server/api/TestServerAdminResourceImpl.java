@@ -29,7 +29,7 @@ import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Path("/giftcard/v2/testServerAdmin")
+@Path("/giftcard/v3/testServerAdmin")
 @Consumes({ "application/json" })
 @Produces({ "application/json" })
 @Api(description = "the Giftcard API")

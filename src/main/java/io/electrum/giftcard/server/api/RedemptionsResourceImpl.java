@@ -1,5 +1,14 @@
 package io.electrum.giftcard.server.api;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.ws.rs.Path;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.core.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.electrum.giftcard.api.IRedemptionsResource;
 import io.electrum.giftcard.api.RedemptionsResource;
 import io.electrum.giftcard.api.model.RedemptionConfirmation;
@@ -8,18 +17,7 @@ import io.electrum.giftcard.api.model.RedemptionReversal;
 import io.electrum.giftcard.handler.GiftcardMessageHandlerFactory;
 import io.swagger.annotations.Api;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-@Path("/giftcard/v2/redemptions")
+@Path("/giftcard/v3/redemptions")
 @Api(description = "the Giftcard API")
 public class RedemptionsResourceImpl extends RedemptionsResource implements IRedemptionsResource {
 
@@ -40,34 +38,42 @@ public class RedemptionsResourceImpl extends RedemptionsResource implements IRed
          String confirmationId,
          RedemptionConfirmation confirmation,
          SecurityContext securityContext,
+         Request request,
          HttpHeaders httpHeaders,
+         AsyncResponse asyncResponse,
          UriInfo uriInfo,
          HttpServletRequest httpServletRequest) {
       log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
       log.debug(String.format("%s %s\n%s", httpServletRequest.getMethod(), uriInfo.getPath(), confirmation));
       Response rsp =
-            GiftcardMessageHandlerFactory.getConfirmRedemptionHandler().handle(
-                  requestId,
-                  confirmationId,
-                  confirmation,
-                  httpHeaders);
+            GiftcardMessageHandlerFactory.getConfirmRedemptionHandler()
+                  .handle(requestId, confirmationId, confirmation, httpHeaders);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
+
+      asyncResponse.resume(rsp);
+
       return rsp;
    }
 
    @Override
    public Response redeem(
          String requestId,
-         @Valid RedemptionRequest request,
+         @Valid RedemptionRequest redemptionRequest,
          SecurityContext securityContext,
+         Request request,
          HttpHeaders httpHeaders,
+         AsyncResponse asyncResponse,
          UriInfo uriInfo,
          HttpServletRequest httpServletRequest) {
       log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
-      log.debug(String.format("%s %s\n%s", httpServletRequest.getMethod(), uriInfo.getPath(), request));
+      log.debug(String.format("%s %s\n%s", httpServletRequest.getMethod(), uriInfo.getPath(), redemptionRequest));
       Response rsp =
-            GiftcardMessageHandlerFactory.getRedemptionHandler().handle(requestId, request, httpHeaders, uriInfo);
+            GiftcardMessageHandlerFactory.getRedemptionHandler()
+                  .handle(requestId, redemptionRequest, httpHeaders, uriInfo);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
+
+      asyncResponse.resume(rsp);
+
       return rsp;
    }
 
@@ -77,18 +83,20 @@ public class RedemptionsResourceImpl extends RedemptionsResource implements IRed
          String reversalId,
          RedemptionReversal reversal,
          SecurityContext securityContext,
+         Request request,
          HttpHeaders httpHeaders,
+         AsyncResponse asyncResponse,
          UriInfo uriInfo,
          HttpServletRequest httpServletRequest) {
       log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
       log.debug(String.format("%s %s\n%s", httpServletRequest.getMethod(), uriInfo.getPath(), reversal));
       Response rsp =
-            GiftcardMessageHandlerFactory.getReverseRedemptionHandler().handle(
-                  requestId,
-                  reversalId,
-                  reversal,
-                  httpHeaders);
+            GiftcardMessageHandlerFactory.getReverseRedemptionHandler()
+                  .handle(requestId, reversalId, reversal, httpHeaders);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
+
+      asyncResponse.resume(rsp);
+
       return rsp;
    }
 }

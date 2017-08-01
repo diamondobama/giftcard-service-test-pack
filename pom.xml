@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.electrum</groupId>
   <artifactId>giftcard-service-test-pack</artifactId>
-  <version>1.2.0</version>
+  <version>1.3.0</version>
   <packaging>jar</packaging>
   <name>Giftcard Test Pack</name>
   <description>Server and Postman scripts to test Giftcard Service Interface implementaitons</description>
@@ -42,7 +42,7 @@
     <slf4j-version>1.7.5</slf4j-version>
     <logback-version>1.0.13</logback-version>
     <giftcard-major-version>3</giftcard-major-version>
-    <giftcard-version>${giftcard-major-version}.0.1</giftcard-version>
+    <giftcard-version>${giftcard-major-version}.0.3</giftcard-version>
   </properties>
 
   <dependencies>
