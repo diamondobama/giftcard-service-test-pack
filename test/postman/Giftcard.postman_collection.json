@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "Giftcard",
-		"_postman_id": "ef64858a-cf32-4585-cb94-7116a8bfb763",
+		"_postman_id": "e1bdf4fd-a081-21ba-f305-390814ea4ac1",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -682,6 +682,122 @@
 			]
 		},
 		{
+			"name": "Admin",
+			"description": "",
+			"item": [
+				{
+					"name": "Delete CardData",
+					"request": {
+						"url": "{{host}}/giftcard/{{version}}/testServerAdmin/data/card/1111111111111111111",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic MjIyMjIyMjI6cGFzc3dvcmQ=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ProductData",
+					"request": {
+						"url": "{{host}}/giftcard/{{version}}/testServerAdmin/data/product/product999",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic MjIyMjIyMjI6cGFzc3dvcmQ=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Add ProductData",
+					"request": {
+						"url": "http://{{host}}/giftcard/{{version}}/testServerAdmin/data/product",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic MjIyMjIyMjI6cGFzc3dvcmQ=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n      \"product\": {\n        \"id\": \"product999\",\n        \"barcode\": \"9999999999999\",\n        \"type\": \"physical\"\n      },\n      \"startingBalance\": {\n        \"amount\": 999999999999,\n        \"currency\": \"710\"\n      }\n    }\n]"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Add CardData",
+					"request": {
+						"url": "http://{{host}}/giftcard/{{version}}/testServerAdmin/data/card",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic MjIyMjIyMjI6cGFzc3dvcmQ=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n      \"card\": {\n        \"pan\": \"1111111111111111111\",\n        \"expiryDate\": \"2211\",\n        \"clearPin\": \"4757\"\n      },\n      \"balance\": {\n        \"amount\": 123,\n        \"currency\": \"710\"\n      },\n      \"status\": \"NEW\"\n    },\n    {\n      \"card\": {\n        \"pan\": \"2222222222222222222\",\n        \"expiryDate\": \"2212\"\n      },\n      \"balance\": {\n        \"amount\": 0,\n        \"currency\": \"710\"\n      },\n      \"status\": \"NEW\"\n    }\n]"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Data",
+					"request": {
+						"url": "{{host}}/giftcard/{{version}}/testServerAdmin/data",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic MjIyMjIyMjI6cGFzc3dvcmQ=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Happy Day Requests",
 			"description": "A set of successful and confirmed requests of all types. This demonstrates the complete lifecycle of a card and ensures that the base functionality is in place.",
 			"item": [
@@ -733,7 +849,7 @@
 							"listen": "prerequest",
 							"script": {
 								"type": "text/javascript",
-								"exec": "function _p8(s) {\n       var p = (Math.random().toString(16)+\"000000000\").substr(2,8);\n       return s ? \"-\" + p.substr(0,4) + \"-\" + p.substr(4,4) : p ;\n   }\n\nfunction uuid() {\n   \n   return _p8() + _p8(true) + _p8(true) + _p8();\n}\n\nvar requestUuid = uuid();\npostman.setEnvironmentVariable(\"activationRequestUuid\", requestUuid);\n\nvar card = {pan: \"8561725642498548895\", expDate: \"4010\"};\npostman.setEnvironmentVariable(\"cardPan\", card.pan);\npostman.setEnvironmentVariable(\"cardExpDate\", card.expDate);\n\nvar product = {id: \"product001\", barcode: \"2216314009131\", type: \"physical\", startingBalance: 0};\npostman.setEnvironmentVariable(\"productId\", product.id);\npostman.setEnvironmentVariable(\"productBarcode\", product.barcode);\npostman.setEnvironmentVariable(\"productType\", product.type);\npostman.setEnvironmentVariable(\"productStartBal\", product.startingBalance);\n\nvar uuidLast4 = requestUuid.substr(requestUuid.length-4, 4);\n\npostman.setEnvironmentVariable(\"originatorRef\", (\"orig\"+uuidLast4).toUpperCase());\npostman.setEnvironmentVariable(\"clientRef\", (\"clnt\"+uuidLast4).toUpperCase());\npostman.setEnvironmentVariable(\"settlementEntityRef\", (\"sett\"+uuidLast4).toUpperCase());\npostman.setEnvironmentVariable(\"receiverRef\", (\"receiver\"+uuidLast4).toUpperCase());\n\nvar dateTime = new Date().toISOString();\npostman.setEnvironmentVariable(\"timestamp\", dateTime);"
+								"exec": "function _p8(s) {\n       var p = (Math.random().toString(16)+\"000000000\").substr(2,8);\n       return s ? \"-\" + p.substr(0,4) + \"-\" + p.substr(4,4) : p ;\n   }\n\nfunction uuid() {\n   \n   return _p8() + _p8(true) + _p8(true) + _p8();\n}\n\nvar requestUuid = uuid();\npostman.setEnvironmentVariable(\"activationRequestUuid\", requestUuid);\n\nvar card = {pan: \"3395745765797535106\", expDate: \"4003\"};\npostman.setEnvironmentVariable(\"cardPan\", card.pan);\npostman.setEnvironmentVariable(\"cardExpDate\", card.expDate);\n\nvar product = {id: \"product002\", barcode: \"9355115077680\", type: \"physical\", startingBalance: 100};\npostman.setEnvironmentVariable(\"productId\", product.id);\npostman.setEnvironmentVariable(\"productBarcode\", product.barcode);\npostman.setEnvironmentVariable(\"productType\", product.type);\npostman.setEnvironmentVariable(\"productStartBal\", product.startingBalance);\n\nvar uuidLast4 = requestUuid.substr(requestUuid.length-4, 4);\n\npostman.setEnvironmentVariable(\"originatorRef\", (\"orig\"+uuidLast4).toUpperCase());\npostman.setEnvironmentVariable(\"clientRef\", (\"clnt\"+uuidLast4).toUpperCase());\npostman.setEnvironmentVariable(\"settlementEntityRef\", (\"sett\"+uuidLast4).toUpperCase());\npostman.setEnvironmentVariable(\"receiverRef\", (\"receiver\"+uuidLast4).toUpperCase());\n\nvar dateTime = new Date().toISOString();\npostman.setEnvironmentVariable(\"timestamp\", dateTime);"
 							}
 						}
 					],
