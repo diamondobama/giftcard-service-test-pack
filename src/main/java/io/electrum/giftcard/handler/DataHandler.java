@@ -16,10 +16,16 @@ import io.electrum.giftcard.server.api.model.CardData;
 import io.electrum.giftcard.server.api.model.DataResponse;
 import io.electrum.giftcard.server.api.model.ProductData;
 import io.electrum.giftcard.server.backend.db.MockGiftcardDb;
+import io.electrum.giftcard.server.backend.records.AdviceRecord;
 import io.electrum.giftcard.server.backend.records.CardRecord;
 import io.electrum.giftcard.server.backend.records.ProductRecord;
+import io.electrum.giftcard.server.backend.records.RequestRecord;
+import io.electrum.giftcard.server.backend.tables.AdviceTable;
+import io.electrum.giftcard.server.backend.tables.CardTable;
 import io.electrum.giftcard.server.backend.tables.ProductTable;
+import io.electrum.giftcard.server.backend.tables.RequestTable;
 import io.electrum.giftcard.server.util.GiftcardModelUtils;
+import io.electrum.vas.model.BasicAdvice;
 
 public class DataHandler {
    private static final Logger log = LoggerFactory.getLogger(GiftcardTestServer.class.getPackage().getName());
@@ -84,6 +90,135 @@ public class DataHandler {
                         .product(productRecord == null ? null : productRecord.getProduct()));
          }
          return Response.status(200).entity(dataResponse).build();
+      } catch (Exception e) {
+         log.debug("error processing data request", e);
+         for (StackTraceElement ste : e.getStackTrace()) {
+            log.debug(ste.toString());
+         }
+         Response rsp = Response.serverError().build();
+         return rsp;
+      }
+   }
+
+   /**
+    * Removes a card from the CardTable. This method will also remove any associated activation, load, redeem or void
+    * requests and their associated advices. All records pertaining to messages referencing the particular card are
+    * removed first and then the CardRecord itself.
+    * 
+    * @param cardNumber
+    * @param httpHeaders
+    * @param uriInfo
+    * @return
+    */
+   public Response handleDeleteCardRequest(String cardNumber, HttpHeaders httpHeaders, UriInfo uriInfo) {
+      try {
+         String authString = GiftcardModelUtils.getAuthString(httpHeaders.getHeaderString(HttpHeaders.AUTHORIZATION));
+         String username = GiftcardModelUtils.getUsernameFromAuth(authString);
+         String password = GiftcardModelUtils.getPasswordFromAuth(authString);
+         // get the DB for this user
+         MockGiftcardDb giftcardDb = GiftcardTestServer.getBackend().getDbForUser(username, password);
+         CardRecord cardRecord = giftcardDb.getCardTable().getRecord(cardNumber);
+         if (cardRecord != null) {
+            removeMsgRecords(
+                  cardRecord.getActivationId(),
+                  giftcardDb.getActivationsTable(),
+                  giftcardDb.getActivationConfirmationsTable(),
+                  giftcardDb.getActivationReversalsTable());
+            for (String loadId : cardRecord.getLoadIds()) {
+               removeMsgRecords(
+                     loadId,
+                     giftcardDb.getLoadsTable(),
+                     giftcardDb.getLoadConfirmationsTable(),
+                     giftcardDb.getLoadReversalsTable());
+            }
+            for (String redeemId : cardRecord.getRedemptionIds()) {
+               removeMsgRecords(
+                     redeemId,
+                     giftcardDb.getRedemptionsTable(),
+                     giftcardDb.getRedemptionConfirmationsTable(),
+                     giftcardDb.getRedemptionReversalsTable());
+            }
+            removeMsgRecords(
+                  cardRecord.getVoidId(),
+                  giftcardDb.getVoidsTable(),
+                  giftcardDb.getVoidConfirmationsTable(),
+                  giftcardDb.getVoidReversalsTable());
+            // Remove the actual CardRecord now
+            giftcardDb.getCardTable().removeRecord(cardNumber);
+         }
+         DataResponse dataResponse = (DataResponse) handle(httpHeaders, uriInfo).getEntity();
+         return Response.status(200).entity(dataResponse).build();
+      } catch (Exception e) {
+         log.debug("error processing data request", e);
+         for (StackTraceElement ste : e.getStackTrace()) {
+            log.debug(ste.toString());
+         }
+         Response rsp = Response.serverError().build();
+         return rsp;
+      }
+   }
+
+   public void removeMsgRecords(
+         String requestId,
+         RequestTable<? extends RequestRecord> requestTable,
+         AdviceTable<? extends AdviceRecord<? extends BasicAdvice>> confirmationsTable,
+         AdviceTable<? extends AdviceRecord<? extends BasicAdvice>> reversalsTable) {
+      // Remove activations
+      RequestRecord req = requestTable.getRecord(requestId);
+      if (req != null) {
+         removeRecordsFromAdvTable(requestId, confirmationsTable);
+         removeRecordsFromAdvTable(requestId, reversalsTable);
+         requestTable.removeRecord(requestId);
+      }
+   }
+
+   public void removeRecordsFromAdvTable(
+         String requestId,
+         AdviceTable<? extends AdviceRecord<? extends BasicAdvice>> adviceTable) {
+      List<String> recordsToRemove = new ArrayList<String>();
+      Enumeration<? extends AdviceRecord<? extends BasicAdvice>> confRecords = adviceTable.getRecords();
+      while (confRecords.hasMoreElements()) {
+         AdviceRecord<? extends BasicAdvice> confRecord = confRecords.nextElement();
+         if (confRecord.getRequestId().equals(requestId)) {
+            recordsToRemove.add(confRecord.getRecordId());
+         }
+      }
+      adviceTable.removeRecords(recordsToRemove);
+   }
+
+   public Response handleAddCardDataRequest(List<CardData> cards, HttpHeaders httpHeaders, UriInfo uriInfo) {
+      try {
+         String authString = GiftcardModelUtils.getAuthString(httpHeaders.getHeaderString(HttpHeaders.AUTHORIZATION));
+         String username = GiftcardModelUtils.getUsernameFromAuth(authString);
+         String password = GiftcardModelUtils.getPasswordFromAuth(authString);
+         // get the DB for this user
+         MockGiftcardDb giftcardDb = GiftcardTestServer.getBackend().getDbForUser(username, password);
+         CardTable cardTable = giftcardDb.getCardTable();
+         for (CardData cardData : cards) {
+            CardRecord newRecord = cardTable.getRecord(cardData.getCard().getPan());
+            boolean isNew = false;
+            if (newRecord == null) {
+               isNew = true;
+               newRecord = new CardRecord(cardData.getCard().getPan());
+            } else {
+               newRecord.setActivationId(null);
+               newRecord.setLoadIds(new ArrayList<String>());
+               newRecord.setRedemptionIds(new ArrayList<String>());
+               newRecord.setVoidId(null);
+            }
+            newRecord.setCard(cardData.getCard());
+            newRecord.setAvailableBalance(cardData.getBalance());
+            newRecord.setBalance(cardData.getBalance());
+            newRecord.setStatus(cardData.getStatus());
+            newRecord.setOrigClearPin(cardData.getCard().getClearPin());
+            newRecord.setOrigEncPin(cardData.getCard().getEncryptedPin());
+            newRecord.setProductId(cardData.getProduct() == null ? null : cardData.getProduct().getId());
+            if (isNew) {
+               cardTable.putRecord(newRecord);
+            }
+         }
+         DataResponse dataResponse = (DataResponse) handle(httpHeaders, uriInfo).getEntity();
+         return Response.status(201).entity(dataResponse).build();
       } catch (Exception e) {
          log.debug("error processing data request", e);
          for (StackTraceElement ste : e.getStackTrace()) {

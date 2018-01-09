@@ -1,1 +1,1 @@
-java $JAVA_OPTS -jar target/giftcard-service-test-pack-1.2.0-jar-with-dependencies.jar $PORT
+java $JAVA_OPTS -jar target/giftcard-service-test-pack-1.4.0-SNAPSHOT-jar-with-dependencies.jar $PORT

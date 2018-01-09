@@ -2,24 +2,10 @@ package io.electrum.giftcard.server.backend.records;
 
 import io.electrum.giftcard.api.model.VoidReversal;
 
-public class VoidReversalRecord extends GiftcardRecord {
-   protected String requestId;
-   protected VoidReversal voidReversal;
-
-   private VoidReversalRecord() {
-      // not allowed to create a record without a record ID.
-   }
+public class VoidReversalRecord extends AdviceRecord<VoidReversal> {
 
    public VoidReversalRecord(String recordId) {
       this.recordId = recordId;
-   }
-
-   public String getRequestId() {
-      return requestId;
-   }
-
-   public void setRequestId(String requestId) {
-      this.requestId = requestId;
    }
 
    public String getReversalId() {
@@ -27,10 +13,10 @@ public class VoidReversalRecord extends GiftcardRecord {
    }
 
    public VoidReversal getVoidReversal() {
-      return voidReversal;
+      return getAdvice();
    }
 
    public void setVoidReversal(VoidReversal voidReversal) {
-      this.voidReversal = voidReversal;
+      setAdvice(voidReversal);
    }
 }
