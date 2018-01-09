@@ -196,10 +196,9 @@ public class DataHandler {
          CardTable cardTable = giftcardDb.getCardTable();
          for (CardData cardData : cards) {
             CardRecord newRecord = cardTable.getRecord(cardData.getCard().getPan());
-            boolean isNew = false;
             if (newRecord == null) {
-               isNew = true;
                newRecord = new CardRecord(cardData.getCard().getPan());
+               cardTable.putRecord(newRecord);
             } else {
                newRecord.setActivationId(null);
                newRecord.setLoadIds(new ArrayList<String>());
@@ -213,9 +212,6 @@ public class DataHandler {
             newRecord.setOrigClearPin(cardData.getCard().getClearPin());
             newRecord.setOrigEncPin(cardData.getCard().getEncryptedPin());
             newRecord.setProductId(cardData.getProduct() == null ? null : cardData.getProduct().getId());
-            if (isNew) {
-               cardTable.putRecord(newRecord);
-            }
          }
          DataResponse dataResponse = (DataResponse) handle(httpHeaders, uriInfo).getEntity();
          return Response.status(201).entity(dataResponse).build();
@@ -246,6 +242,70 @@ public class DataHandler {
                         .startingBalance(productRecord.getStartingBalance()));
          }
          return Response.status(200).entity(dataResponse).build();
+      } catch (Exception e) {
+         log.debug("error processing data request", e);
+         for (StackTraceElement ste : e.getStackTrace()) {
+            log.debug(ste.toString());
+         }
+         Response rsp = Response.serverError().build();
+         return rsp;
+      }
+   }
+
+   public Response handleAddProductRequest(List<ProductData> products, HttpHeaders httpHeaders, UriInfo uriInfo) {
+      try {
+         String authString = GiftcardModelUtils.getAuthString(httpHeaders.getHeaderString(HttpHeaders.AUTHORIZATION));
+         String username = GiftcardModelUtils.getUsernameFromAuth(authString);
+         String password = GiftcardModelUtils.getPasswordFromAuth(authString);
+         // get the DB for this user
+         MockGiftcardDb giftcardDb = GiftcardTestServer.getBackend().getDbForUser(username, password);
+         ProductTable productTable = giftcardDb.getProductTable();
+         for (ProductData productData : products) {
+            ProductRecord newRecord = productTable.getRecord(productData.getProduct().getId());
+            newRecord = new ProductRecord(productData.getProduct().getId());
+            productTable.putRecord(newRecord);
+            newRecord.setProduct(productData.getProduct());
+            newRecord.setStartingBalance(productData.getStartingBalance());
+         }
+         DataResponse dataResponse = (DataResponse) handle(httpHeaders, uriInfo).getEntity();
+         return Response.status(201).entity(dataResponse).build();
+      } catch (Exception e) {
+         log.debug("error processing data request", e);
+         for (StackTraceElement ste : e.getStackTrace()) {
+            log.debug(ste.toString());
+         }
+         Response rsp = Response.serverError().build();
+         return rsp;
+      }
+   }
+
+   public Response handleDeleteProductRequest(String productId, HttpHeaders httpHeaders, UriInfo uriInfo) {
+      try {
+         String authString = GiftcardModelUtils.getAuthString(httpHeaders.getHeaderString(HttpHeaders.AUTHORIZATION));
+         String username = GiftcardModelUtils.getUsernameFromAuth(authString);
+         String password = GiftcardModelUtils.getPasswordFromAuth(authString);
+         // get the DB for this user
+         MockGiftcardDb giftcardDb = GiftcardTestServer.getBackend().getDbForUser(username, password);
+         Enumeration<CardRecord> cardRecords = giftcardDb.getCardTable().getRecords();
+         List<String> cardsToRemove = new ArrayList<String>();
+         while (cardRecords.hasMoreElements()) {
+            CardRecord cardRecord = cardRecords.nextElement();
+            if (productId != null && productId.equals(cardRecord.getProductId())) {
+               cardsToRemove.add(cardRecord.getCard().getPan());
+            }
+         }
+         Response response = handle(httpHeaders, uriInfo);
+         for (String cardNumber : cardsToRemove) {
+            if (response.getStatus() >= 400) {
+               // something's gone wrong - just return the response
+               return response;
+            }
+            response = handleDeleteCardRequest(cardNumber, httpHeaders, uriInfo);
+         }
+         // once all cards for the product have been removed, just remove the product itself
+         giftcardDb.getProductTable().removeRecord(productId);
+         response = handle(httpHeaders, uriInfo);
+         return response;
       } catch (Exception e) {
          log.debug("error processing data request", e);
          for (StackTraceElement ste : e.getStackTrace()) {

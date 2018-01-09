@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import io.electrum.giftcard.handler.GiftcardMessageHandlerFactory;
 import io.electrum.giftcard.server.api.model.CardData;
 import io.electrum.giftcard.server.api.model.DataResponse;
+import io.electrum.giftcard.server.api.model.ProductData;
 import io.electrum.giftcard.server.api.model.ResetRequest;
 import io.electrum.giftcard.server.api.model.ResetResponse;
 import io.swagger.annotations.Api;
@@ -133,7 +134,10 @@ public class TestServerAdminResourceImpl {
    @ApiOperation(value = "Delete the test data configured in the Giftcard Test Server for a certain card.", notes = "The Test "
          + "Server Admin Data endpoint allows a user of the Test Server to delete "
          + "the card data and state for a card configured in the Test Server. This "
-         + "allows the user to manage valid card information to use for testing.", authorizations = {
+         + "allows the user to manage valid card information to use for testing. "
+         + "Note that removing a card will also remove ALL records of ALL messages "
+         + "performed against that card (with the exception of Lookups) in order to "
+         + "maintain data integrity.", authorizations = {
                @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = DataResponse.class),
          @ApiResponse(code = 500, message = "Internal Server Error") })
@@ -146,7 +150,8 @@ public class TestServerAdminResourceImpl {
          @Context HttpServletRequest httpServletRequest) {
       log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
       log.debug(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
-      Response rsp = GiftcardMessageHandlerFactory.getDataHandler().handleDeleteCardRequest(cardNumber, httpHeaders, uriInfo);
+      Response rsp =
+            GiftcardMessageHandlerFactory.getDataHandler().handleDeleteCardRequest(cardNumber, httpHeaders, uriInfo);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
       asyncResponse.resume(rsp);
    }
@@ -163,7 +168,7 @@ public class TestServerAdminResourceImpl {
    @ApiResponses(value = { @ApiResponse(code = 201, message = "Created", response = DataResponse.class),
          @ApiResponse(code = 500, message = "Internal Server Error") })
    public void addCardData(
-         @ApiParam(value = "The list of cards to be added to the database in the form of an array of CardData obejcts.", required = true) List<CardData> cards,
+         @ApiParam(value = "The list of cards to be added to the database in the form of an array of CardData objects.", required = true) List<CardData> cards,
          @Context SecurityContext securityContext,
          @Suspended AsyncResponse asyncResponse,
          @Context HttpHeaders httpHeaders,
@@ -198,6 +203,58 @@ public class TestServerAdminResourceImpl {
       log.debug(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
       Response rsp =
             GiftcardMessageHandlerFactory.getDataHandler().handleProductRequest(productId, httpHeaders, uriInfo);
+      log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
+      asyncResponse.resume(rsp);
+   }
+
+   @POST
+   @Path("/data/product/")
+   @Consumes({ "application/json" })
+   @Produces({ "application/json" })
+   @ApiOperation(value = "Add one or more products to the test database.", notes = "The Test "
+         + "Server Admin Data endpoint allows a user of the Test Server to add "
+         + "products to the test database backing the Test Server. In this way a "
+         + "user can provide their own product information to use for testing.", authorizations = {
+               @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
+   @ApiResponses(value = { @ApiResponse(code = 201, message = "Created", response = DataResponse.class),
+         @ApiResponse(code = 500, message = "Internal Server Error") })
+   public void addProductData(
+         @ApiParam(value = "The list of products to be added to the database in the form of an array of ProductData objects.", required = true) List<ProductData> products,
+         @Context SecurityContext securityContext,
+         @Suspended AsyncResponse asyncResponse,
+         @Context HttpHeaders httpHeaders,
+         @Context UriInfo uriInfo,
+         @Context HttpServletRequest httpServletRequest) {
+      log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
+      Response rsp =
+            GiftcardMessageHandlerFactory.getDataHandler().handleAddProductRequest(products, httpHeaders, uriInfo);
+      log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
+      asyncResponse.resume(rsp);
+   }
+
+   @DELETE
+   @Path("/data/product/{productId}")
+   @Produces({ "application/json" })
+   @ApiOperation(value = "Delete the test data configured in the Giftcard Test Server for a certain product.", notes = "The Test "
+         + "Server Admin Data endpoint allows a user of the Test Server to delete "
+         + "the product data for a product configured in the Test Server. This "
+         + "allows the user to manage valid product information to use for testing. "
+         + "Note that removing a product will remove ALL cards associated with the "
+         + "product to maintain data integrity.", authorizations = {
+               @Authorization(value = "httpBasic") }, tags = { "Test Server Admin", })
+   @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = DataResponse.class),
+         @ApiResponse(code = 500, message = "Internal Server Error") })
+   public void deleteProductData(
+         @ApiParam(value = "The ID of the product for which data should be deleted.", required = true) @PathParam("productId") String productId,
+         @Context SecurityContext securityContext,
+         @Suspended AsyncResponse asyncResponse,
+         @Context HttpHeaders httpHeaders,
+         @Context UriInfo uriInfo,
+         @Context HttpServletRequest httpServletRequest) {
+      log.info(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
+      log.debug(String.format("%s %s", httpServletRequest.getMethod(), uriInfo.getPath()));
+      Response rsp =
+            GiftcardMessageHandlerFactory.getDataHandler().handleDeleteProductRequest(productId, httpHeaders, uriInfo);
       log.debug(String.format("Entity returned:\n%s", rsp.getEntity()));
       asyncResponse.resume(rsp);
    }
