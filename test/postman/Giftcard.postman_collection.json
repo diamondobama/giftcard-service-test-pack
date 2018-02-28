@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "Giftcard",
-		"_postman_id": "e1bdf4fd-a081-21ba-f305-390814ea4ac1",
+		"_postman_id": "aa2ea5a8-a6bf-de9f-1221-2227d61d3fed",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -992,7 +992,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Status code is 201\"] = responseCode.code === 201;\n\nvar jsonData = JSON.parse(responseBody);\n\nvar amounts = jsonData.amounts;\ntests[\"Amounts present\"] = amounts !== null;\ntests[\"Requested amount returned\"] = amounts.requestAmount !== null;\ntests[\"Requested amount correct\"] = amounts.requestAmount.amount == postman.getEnvironmentVariable(\"loadAmount\");\ntests[\"Approved amount returned\"] = amounts.approvedAmount !== null;\ntests[\"Approved amount correct\"] = amounts.approvedAmount.amount == postman.getEnvironmentVariable(\"loadAmount\");\n/*\nDuring a load the book balance is updated immediately.\nThe available balance should only update upon confirmation.\nTherefore we check that the two balances have different values.\n*/\ntests[\"Balance amount returned\"] = amounts.balanceAmount !== null;\ntests[\"Balance amount correct\"] = amounts.balanceAmount.amount == postman.getEnvironmentVariable(\"balanceAmount\") + amounts.approvedAmount.amount;\ntests[\"Available balance returned\"] = amounts.availableBalance !== null;\ntests[\"Available balance correct\"] = amounts.availableBalance.amount == postman.getEnvironmentVariable(\"activationBalance\");\n\npostman.setEnvironmentVariable(\"balanceAmount\", amounts.balanceAmount.amount);"
+								"exec": "tests[\"Status code is 201\"] = responseCode.code === 201;\n\nvar jsonData = JSON.parse(responseBody);\n\nvar amounts = jsonData.amounts;\ntests[\"Amounts present\"] = amounts !== null;\ntests[\"Requested amount returned\"] = amounts.requestAmount !== null;\ntests[\"Requested amount correct\"] = amounts.requestAmount.amount == postman.getEnvironmentVariable(\"loadAmount\");\ntests[\"Approved amount returned\"] = amounts.approvedAmount !== null;\ntests[\"Approved amount correct\"] = amounts.approvedAmount.amount == postman.getEnvironmentVariable(\"loadAmount\");\n/*\nDuring a load the book balance is updated immediately.\nThe available balance should only update upon confirmation.\nTherefore we check that the two balances have different values.\n*/\ntests[\"Balance amount returned\"] = amounts.balanceAmount !== null;\n\ntests[\"Balance amount correct\"] = amounts.balanceAmount.amount == parseInt(postman.getEnvironmentVariable(\"balanceAmount\")) + amounts.approvedAmount.amount;\ntests[\"Available balance returned\"] = amounts.availableBalance !== null;\ntests[\"Available balance correct\"] = amounts.availableBalance.amount == postman.getEnvironmentVariable(\"activationBalance\");\n\npostman.setEnvironmentVariable(\"balanceAmount\", amounts.balanceAmount.amount);"
 							}
 						},
 						{
