@@ -61,9 +61,6 @@ public class DataHandler {
          return Response.status(200).entity(dataResponse).build();
       } catch (Exception e) {
          log.debug("error processing data request", e);
-         for (StackTraceElement ste : e.getStackTrace()) {
-            log.debug(ste.toString());
-         }
          Response rsp = Response.serverError().build();
          return rsp;
       }
@@ -92,9 +89,6 @@ public class DataHandler {
          return Response.status(200).entity(dataResponse).build();
       } catch (Exception e) {
          log.debug("error processing data request", e);
-         for (StackTraceElement ste : e.getStackTrace()) {
-            log.debug(ste.toString());
-         }
          Response rsp = Response.serverError().build();
          return rsp;
       }
@@ -150,9 +144,6 @@ public class DataHandler {
          return Response.status(200).entity(dataResponse).build();
       } catch (Exception e) {
          log.debug("error processing data request", e);
-         for (StackTraceElement ste : e.getStackTrace()) {
-            log.debug(ste.toString());
-         }
          Response rsp = Response.serverError().build();
          return rsp;
       }
@@ -217,9 +208,6 @@ public class DataHandler {
          return Response.status(201).entity(dataResponse).build();
       } catch (Exception e) {
          log.debug("error processing data request", e);
-         for (StackTraceElement ste : e.getStackTrace()) {
-            log.debug(ste.toString());
-         }
          Response rsp = Response.serverError().build();
          return rsp;
       }
@@ -244,9 +232,6 @@ public class DataHandler {
          return Response.status(200).entity(dataResponse).build();
       } catch (Exception e) {
          log.debug("error processing data request", e);
-         for (StackTraceElement ste : e.getStackTrace()) {
-            log.debug(ste.toString());
-         }
          Response rsp = Response.serverError().build();
          return rsp;
       }
@@ -271,9 +256,6 @@ public class DataHandler {
          return Response.status(201).entity(dataResponse).build();
       } catch (Exception e) {
          log.debug("error processing data request", e);
-         for (StackTraceElement ste : e.getStackTrace()) {
-            log.debug(ste.toString());
-         }
          Response rsp = Response.serverError().build();
          return rsp;
       }
@@ -308,9 +290,6 @@ public class DataHandler {
          return response;
       } catch (Exception e) {
          log.debug("error processing data request", e);
-         for (StackTraceElement ste : e.getStackTrace()) {
-            log.debug(ste.toString());
-         }
          Response rsp = Response.serverError().build();
          return rsp;
       }
