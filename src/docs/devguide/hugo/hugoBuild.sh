@@ -24,7 +24,7 @@ if [ -z $CI ]; then
     exit 1
   fi
 
-  eval $(docker-machine env default)
+  eval $(docker-machine env default --shell bash)
   if [[ $? -ne 0 ]]; then
     echo 'command finished with non zero exit code - failing build'
     exit 1

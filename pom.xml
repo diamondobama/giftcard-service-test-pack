@@ -311,7 +311,7 @@
             <goals>
               <goal>exec</goal>
             </goals>
-            <phase>post-integration-test</phase>
+            <phase>package</phase>
             <configuration>
               <executable>sh</executable>
               <arguments>

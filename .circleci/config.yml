@@ -33,12 +33,12 @@ jobs:
             docker save -o workspace/test-server-image.tar $CIRCLE_PROJECT_REPONAME
       - run:
           name: Save devguide for persisting
-          command: cp -r target/devguide workspace
+          command: cp -r target/devguide/site workspace
       - persist_to_workspace:
           root: workspace
           paths:
             - test-server-image.tar
-            - devguide
+            - site
   deploy:
     docker:
       - image: 813968012009.dkr.ecr.us-east-1.amazonaws.com/circleci-openjdk8-8u162
@@ -71,7 +71,7 @@ jobs:
             docker push $DOCKER_REPONAME:$TAG
       - run:
           name: Deploy docs to Github Pages
-          command: /electrum/bin/deployGithubPages.sh workspace/devguide/site
+          command: /electrum/bin/deployGithubPages.sh workspace/site
   build-with-latest-deps:
     docker:
       - image: 813968012009.dkr.ecr.us-east-1.amazonaws.com/circleci-openjdk8-8u162
