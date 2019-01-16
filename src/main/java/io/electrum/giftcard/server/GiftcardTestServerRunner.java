@@ -21,7 +21,7 @@ import io.electrum.giftcard.server.api.GiftcardTestServer;
 public class GiftcardTestServerRunner {
 
    private static Logger log_logger = LoggerFactory.getLogger("io.electrum.giftcard.server.log");
-   
+
    private static GiftcardTestServer testServer;
 
    public static void main(String[] args) throws Exception {
@@ -81,10 +81,10 @@ public class GiftcardTestServerRunner {
          ServletContextHandler context = new ServletContextHandler();
          context.setContextPath("/");
          context.addServlet(servletHolder, "/*");
-         context.setHandler(sh);
+         context.insertHandler(sh);
 
          server.setHandler(context);
-        
+
          // Start the server
          server.start();
          server.join();
@@ -93,7 +93,7 @@ public class GiftcardTestServerRunner {
          throw e;
       }
    }
-   
+
    public static GiftcardTestServer getTestServer()
    {
       return testServer;
