@@ -25,6 +25,9 @@ jobs:
           name: Build, run, and test
           command: /electrum/bin/postmanTestJava.sh Giftcard
       - run:
+          name: Build hugo site
+          command: ./src/docs/devguide/hugo/run.sh $CIRCLE_WORKING_DIRECTORY
+      - run:
           name: Create workspace directory for persisting between jobs
           command: mkdir -p workspace
       - run:

@@ -33,13 +33,27 @@ fi
 
 echo ''
 echo ''
+echo '  + Creating dummy container with volumes for hugo build'
+echo ''
+docker create -v /src --name hugo-volumes alpine:3.8 /bin/true
+docker cp ${BASE_DIR}/target/devguide/hugo/. hugo-volumes:/src
+
+echo ''
+echo ''
 echo '  + Running hugo build'
 echo ''
-docker run --name "hugo" -v ${BASE_DIR}/target/devguide/hugo:/src -v ${BASE_DIR}/target/devguide/site:/output -e "HUGO_THEME=hugo-material-docs" -e "HUGO_BASEURL=https://electrumpayments.github.io/giftcard-service-test-pack-docs/" jojomi/hugo
-#docker run --name "hugo" -v ${BASE_DIR}/target/devguide/hugo:/src -v ${BASE_DIR}/target/devguide/site:/output -e "HUGO_THEME=hugo-material-docs" -e "HUGO_BASEURL=/" jojomi/hugo
+docker run --name "hugo" --volumes-from hugo-volumes -e "HUGO_THEME=hugo-material-docs" -e "HUGO_BASEURL=https://electrumpayments.github.io/giftcard-service-test-pack-docs/" jojomi/hugo:0.29
+#docker run --name "hugo" --volumes-from hugo-volumes -e "HUGO_THEME=hugo-material-docs" -e "HUGO_BASEURL=/" jojomi/hugo:0.29
+
+echo ''
+echo ''
+echo '  + Copy hugo output from container'
+echo ''
+docker cp hugo:/output ${BASE_DIR}/target/devguide/site
 
 docker stop hugo &> /dev/null
 docker rm hugo &> /dev/null
+docker rm hugo-volumes &> /dev/null
 
 if [ -z $CI ]; then
   echo ''
