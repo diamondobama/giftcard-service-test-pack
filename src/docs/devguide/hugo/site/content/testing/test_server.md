@@ -38,8 +38,8 @@ Of particular note is the [DetailMessage](/testing/specification/definitions/#de
 
 The Test Server defines a [DetailMessage model](/testing/specification/definitions/#DetailMessage). The Test Server returns a [DetailMessage model](/testing/specification/definitions/#DetailMessage) object in the detailMessage field of the [ErrorDetail](/testing/specification/operations/#errorDetail) object returned in error responses. The [DetailMessage model](/testing/specification/definitions/#DetailMessage) model's fields are all of the models defined in the Giftcard Service Interface as well as an extra field called formatErrors. The formatErrors field is an array of [FormatError models](/testing/specification/definitions/#FormatError). A [FormatError models](/testing/specification/definitions/#FormatError) has three fields:
 
-- field - The name of the field which failed validation.
-- msg - A description of the expected format of the field.
-- value - The invalid value received in the field.
+- `field` - The name of the field which failed validation.
+- `msg` - A description of the expected format of the field.
+- `value` - The invalid value received in the field.
 
 The Test Server will validate the format of received messages. If the received message fails validation the Test Server will return a list of fields which failed validation.
