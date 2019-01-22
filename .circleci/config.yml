@@ -44,7 +44,10 @@ jobs:
             - site
   deploy:
     docker:
-      - image: circleci/openjdk:8
+      - image: 813968012009.dkr.ecr.us-east-1.amazonaws.com/circleci-openjdk8-8u162
+        aws_auth:
+          aws_access_key_id: $AWS_ACCESS_KEY_ID
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
     working_directory: /home/circleci/project
     environment:
       HEROKU_APP: giftcard-service-test-pack
