@@ -93,6 +93,7 @@ jobs:
               if [ $? -ne 0 ]; then
                 echo "git push failed: failing build"
                 exit 1;
+              fi
             else
               echo "No docs changed, not deploying to Github pages"
             fi
