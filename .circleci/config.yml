@@ -44,10 +44,8 @@ jobs:
             - site
   deploy:
     docker:
-      - image: 813968012009.dkr.ecr.us-east-1.amazonaws.com/circleci-openjdk8-8u162
-        aws_auth:
-          aws_access_key_id: $AWS_ACCESS_KEY_ID
-          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
+      - image: circleci/openjdk:8
+    working_directory: /home/circleci/project
     environment:
       HEROKU_APP: giftcard-service-test-pack
       DOCKER_REPONAME: electrum/giftcard-test-server
@@ -68,21 +66,36 @@ jobs:
       - attach_workspace:
           at: workspace
       - run:
-          name: Export service interface version
-          # tag with major version of underlying service interface
+          name: Export env vars
           command: |
             echo "export TAG=$(mvn -q -Dexec.executable=echo -Dexec.args='${giftcard-version}' --non-recursive exec:exec | cut -c1)" >> $BASH_ENV
+            echo "export BUILD_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $BASH_ENV
+            echo 'export DOCS_REPONAME="$CIRCLE_PROJECT_REPONAME-docs"' >> $BASH_ENV
       - setup_remote_docker
       - run:
           name: Deploy image to Docker Hub
           command: |
             docker load < workspace/test-server-image.tar
+            # tag with major version of underlying service interface
             docker tag $CIRCLE_PROJECT_REPONAME $DOCKER_REPONAME:$TAG
             echo $DOCKERHUB_PWD | docker login -u $DOCKERHUB_USERNAME --password-stdin
             docker push $DOCKER_REPONAME:$TAG
       - run:
           name: Deploy docs to Github Pages
-          command: /electrum/bin/deployGithubPages.sh workspace/site
+          command: |
+            git clone git@github.com:electrumpayments/$DOCS_REPONAME.git ~/$DOCS_REPONAME
+            cp -r workspace/site/* ~/$DOCS_REPONAME
+            cd ~/$DOCS_REPONAME
+            git add .
+            if [[ `git status --porcelain` ]]; then
+              git commit -m "Adding documentation for release v$BUILD_VERSION. [ci skip]"
+              git push
+              if [ $? -ne 0 ]; then
+                echo "git push failed: failing build"
+                exit 1;
+            else
+              echo "No docs changed, not deploying to Github pages"
+            fi
   build-with-latest-deps:
     docker:
       - image: 813968012009.dkr.ecr.us-east-1.amazonaws.com/circleci-openjdk8-8u162
