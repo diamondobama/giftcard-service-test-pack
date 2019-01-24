@@ -53,7 +53,7 @@ An errorType of `FORMAT_ERROR` is returned followed by an explanation of the for
 Testing a server implementation can be achieved using [this](https://github.com/electrumpayments/giftcard-service-test-pack/tree/master/test/postman) Postman (Collection v2) REST test pack.
 These tests consist of correctly formatted JSON messages that validate server responses. Tests may also consist of a message flow in which multiple related messages are sent sequentially to the server to test handling of state-full interactions (such as requests and confirmations).
 
-The test pack is comprised of three JSON files: `Gifcard.postman_collection.json` , `heroku.postman_environment.json` and `localhost.postman_environment.json`.
+The test pack is comprised of three JSON files: `Giftcard.postman_collection.json` , `heroku.postman_environment.json` and `localhost.postman_environment.json`.
 The first file is a collection of JSON tests that will be run, herein one will find JSON request messages and response validation scripts. These tests are dependant on variables contained in the the preceding two files, these being identical save for the server endpoint they point to:
 
 ```json
@@ -82,10 +82,10 @@ Note that that tests may be run individually from the main Postman view where te
 #### Newman
 1. Install newman (make sure `npm` is installed first):
 ```
-	npm install newman -g
+npm install newman -g
 ```
-2. Run the tests (from the root directory of this reop):
+2. Run the tests (from the root directory of this repo):
 ```
-	newman run test/postman/Giftcard.postman_collection.json -e test/postman/localhost.postman_environment.json
+newman run test/postman/Giftcard.postman_collection.json -e test/postman/localhost.postman_environment.json
 ```
 This will run all tests and provide a basic breakdown of which tests passed and failed.
